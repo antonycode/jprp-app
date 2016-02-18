@@ -1,0 +1,42 @@
+-- Table: portal_message
+
+-- DROP TABLE portal_message;
+
+CREATE TABLE portal_message
+(
+  message_id bigserial NOT NULL,
+  sender_username character varying(100),
+  receiver_username character varying(100),
+  message_content text,
+  "timestamp" timestamp without time zone,
+  status character varying(50),
+  delete_status character varying(50),
+  message_subject character varying(200)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE portal_message
+  OWNER TO postgres;
+
+
+-- Table: portal_message_reply
+
+-- DROP TABLE portal_message_reply;
+
+CREATE TABLE portal_message_reply
+(
+  message_reply_id bigserial NOT NULL,
+  message_id bigint,
+  message_content text,
+  "timestamp" timestamp without time zone,
+  delete_status character varying(50),
+  username character varying(50),
+  CONSTRAINT portal_message_reply_pkey PRIMARY KEY (message_reply_id)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE portal_message_reply
+  OWNER TO postgres;
+
