@@ -319,6 +319,14 @@ class Moh_model extends CI_Model
 
                 }
 
+                //Dimension Analysis dataelementcategoryid
+                $dataelementcategoryid=0;
+                $dimension = $this->db->get_where("dataelementcategory", array("name" => "Mechanisms"));
+                if(sizeof($dimension->result())>0){
+                    $dataelementcategoryid=$dimension->row()->categoryid;
+
+                }
+
                 $userinfo=array(
                     'userinfoid'=>$userid,
                     'uid'=>$user_uid,
@@ -370,12 +378,20 @@ class Moh_model extends CI_Model
                             'userroleid'=>$user_role_id
                         );
 
+                        //Dimension Analysis-(mechanisms)
+                        $users_catdimensionconstraints=array(
+                            'userid'=>$userid,
+                            'dataelementcategoryid'=>$dataelementcategoryid
+                        );
+
+
 
                         //Updating the assignments
                         $this->db->insert('usergroupmembers', $usergroupmembers);
                         $this->db->insert('usermembership', $usermembership);
                         $this->db->insert('userdatavieworgunits',$userdatavieworgunits);
                         $this->db->insert('userrolemembers', $userrolemembers);
+                        $this->db->insert('users_catdimensionconstraints', $users_catdimensionconstraints);
                     }
 
                 }

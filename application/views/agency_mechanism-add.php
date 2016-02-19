@@ -241,19 +241,14 @@
                 <span class="form_hint">Mechanism Name Must Be Of Atleast 10 Characters</span>
             </li>
             <li>
-                <label for="name">Datim ID:</label>
-                <input type="text" name="datim_id" id=""  placeholder="11243"  required pattern="[1-9][0-9]{4,}"  />
+                <label for="name">Code:</label>
+                <input type="text" name="code" id=""  placeholder="e.g Datim ID"  required pattern="[1-9][0-9]{4,}"  />
                 <span class="form_hint">Mechanism ID Must Be Of Atleast 4 Integer Character Long</span>
             </li>
             <li>
                 <label for="name">Partner Name:</label>
                 <input type="text" name="partner_name" id=""  placeholder="South Rift Valley VCT"  required pattern="{10,}"  />
                 <span class="form_hint">Partner Name Must Be Of Atleast 10 Characters</span>
-            </li>
-            <li>
-                <label for="name">KePMS ID:</label>
-                <input type="text" name="kepms_id" id=""  placeholder="124"  pattern="[1-9][0-9]{1,}"  />
-                <span class="form_hint">Mechanism ID Must Be Of Atleast 1 Integer Character Long</span>
             </li>
             <li>
                 <label for="name">Mechanism Start Date:</label>
