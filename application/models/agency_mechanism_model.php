@@ -35,26 +35,22 @@
 
         $mechanism_name = $this->input->post('mechanism_name');
         $partner_name = $this->input->post('partner_name');
-        $datim_id = $this->input->post('datim_id');
-        $kepms_id = $this->input->post('kepms_id');
+        $code = $this->input->post('code');
         $start_date = $this->input->post('start_date');
         $end_date = $this->input->post('start_date');
         $programs=$this->input->post('programs');
 
-        if($kepms_id==="")
-        {
-            $kepms_id=0;
-        }
-
         $length = 11;
-        $mechanism_uid = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
-        //Step1 Check if Development Partner exists
+        $timestamp = time();
+        $shuffle = $timestamp . "" . "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        $mechanism_uid = substr(hash("md5", str_shuffle($shuffle)), 0, $length);
+        //Step1 Check if Mechanism exists
         $check = $this->db->get_where("attribution_hierarchy", array("name" => $mechanism_name))->result();
         if (sizeof($check) == 0) {
             //step2 Check If There's A usergroup with same name
             $check = $this->db->get_where("usergroup", array("name" => $mechanism_name))->result();
             if (sizeof($check) == 0) {
-                //Step3 Create UserGroup and CategoryOption
+                //Step3 Create UserGroup
                 $this->db->select_max('usergroupid');
                 $group_query = $this->db->get('usergroup');
                 $usergroup_id = 1 + (integer)$group_query->row()->usergroupid;
@@ -67,7 +63,24 @@
                     'lastupdated' => date("Y-m-d")
                 );
                 $this->db->insert("usergroup", $usergroup);
-                //Create Category Option
+
+
+                //Step4 Insert Into attribution_hierarchy table
+                $hierarchy = array(
+                    "uid" => $mechanism_uid,
+                    "code" => $code,
+                    "name" => $mechanism_name,
+                    "shortname" => $partner_name,
+                    "level" => 4,
+                    "parentid" => $this->session->userdata('group_uid'),
+                    "usergroup_id"=>$usergroup_id,
+                    "categorycombo_id" => 0,
+                    "categoryoption_id" => 0
+                );
+
+                $this->db->insert("attribution_hierarchy", $hierarchy);
+
+                //Step 5 Create Category Option
                 $this->db->select_max('categoryoptionid');
                 $option_query = $this->db->get('dataelementcategoryoption');
                 $categoryoption_id = 1 + (integer)$option_query->row()->categoryoptionid;
@@ -80,20 +93,120 @@
                     'lastupdated' => date("Y-m-d")
                 );
 
-                $this->db->insert("dataelementcategoryoption", $categoryoption);
-                //Step3 Insert Into attribution_hierarchy table
-                $hierarchy = array(
-                    "uid" => $mechanism_uid,
-                    "code" => $datim_id,
-                    "name" => $mechanism_name,
-                    "shortname" => $partner_name,
-                    "level" => 4,
-                    "parentid" => $this->session->userdata('group_uid')
-                );
+                if($this->db->insert("dataelementcategoryoption", $categoryoption)){
 
-                $this->db->insert("attribution_hierarchy", $hierarchy);
+                    //Step
+                    //Sharing categoryoption with usergroups-agency, donor
+                    //Getting the usergroupid for donor and agency
+                    $parent_agency_uid=$this->session->userdata('group_uid');
+
+                    $result1=$this->db->get_where("attribution_hierarchy", array("uid" => $parent_agency_uid));
+                    if(sizeof($result1->result())>0){
+                        $parent_donor_uid=$result1->row()->parentid;
+                        $agency_usergroup_id=$result1->row()->usergroup_id;
+                        $agency_name=$result1->row()->name;
+                    }
+
+                    $result2=$this->db->get_where("attribution_hierarchy", array("uid" => $parent_donor_uid));
+                    if(sizeof($result2->result())>0){
+                        $donor_usergroup_id=$result2->row()->usergroup_id;
+                        $donor_name=$result2->row()->name;
+                    }
+
+                    //Sharing category option
+                    if($donor_usergroup_id!=null && $agency_usergroup_id!=null){
+
+                        //Usergroup-Mechanism -Sharing
+                        $this->db->select_max('usergroupaccessid');
+                        $mechanism_access = $this->db->get('usergroupaccess');
+                        $mechanism_accessid = 1 + (integer)$mechanism_access->row()->usergroupaccessid;
+                        $groupaccess_mechanism = array(
+                            "usergroupaccessid" => $mechanism_accessid,
+                            "access" => "r-------",
+                            "usergroupid" => $usergroup_id
+                        );
+                        $this->db->insert("usergroupaccess", $groupaccess_mechanism);
+
+                        $catoptshare_mechanism = array(
+                            "categoryoptionid" => $categoryoption_id,
+                            "usergroupaccessid" => $mechanism_accessid
+                        );
+                        $this->db->insert("dataelementcategoryoptionusergroupaccesses", $catoptshare_mechanism);
+
+
+                        //Usergroup-Agency -Sharing
+                        $this->db->select_max('usergroupaccessid');
+                        $agency_access = $this->db->get('usergroupaccess');
+                        $agency_accessid = 1 + (integer)$agency_access->row()->usergroupaccessid;
+                        $groupaccess_agency = array(
+                            "usergroupaccessid" => $agency_accessid,
+                            "access" => "r-------",
+                            "usergroupid" => $agency_usergroup_id
+                        );
+                        $this->db->insert("usergroupaccess", $groupaccess_agency);
+
+                        $catoptshare_agency = array(
+                            "categoryoptionid" => $categoryoption_id,
+                            "usergroupaccessid" => $agency_accessid
+                        );
+                        $this->db->insert("dataelementcategoryoptionusergroupaccesses", $catoptshare_agency);
+
+
+                        //Usergroup-Donor -Sharing
+                        $this->db->select_max('usergroupaccessid');
+                        $donor_access = $this->db->get('usergroupaccess');
+                        $donor_accessid = 1 + (integer)$donor_access->row()->usergroupaccessid;
+                        $groupaccess_donor = array(
+                            "usergroupaccessid" => $donor_accessid,
+                            "access" => "r-------",
+                            "usergroupid" => $donor_usergroup_id
+                        );
+                        $this->db->insert("usergroupaccess", $groupaccess_donor);
+
+                        $catoptshare_donor = array(
+                            "categoryoptionid" => $categoryoption_id,
+                            "usergroupaccessid" => $donor_accessid
+                        );
+                        $this->db->insert("dataelementcategoryoptionusergroupaccesses", $catoptshare_donor);
+
+
+                        //Adding the categoryoption of the mechanism to categoryoptiongroup of-Agency and Donor
+
+                        //Adding mechanism categoryoption to Donor categoryoptiongroup memebers
+                        $result3=$this->db->get_where("categoryoptiongroup", array("name" => $agency_name));
+                        if(sizeof($result3->result())>0){
+                            $agency_categoryoptiongroupid=$result3->row()->categoryoptiongroupid;
+                        }
+
+                        $categoryoptiongroupmemebers_agency=array(
+                            'categoryoptionid'=>$categoryoption_id,
+                            'categoryoptiongroupid'=>$agency_categoryoptiongroupid
+                        );
+
+                        $this->db->insert("categoryoptiongroupmembers", $categoryoptiongroupmemebers_agency);
+
+                        //Adding mechanism categoryoption to Donor categoryoptiongroup memebers
+                        $result4=$this->db->get_where("categoryoptiongroup", array("name" => $donor_name));
+                        if(sizeof($result4->result())>0){
+                            $donor_categoryoptiongroupid=$result4->row()->categoryoptiongroupid;
+                        }
+
+                        $categoryoptiongroupmemebers_donor=array(
+                            'categoryoptionid'=>$categoryoption_id,
+                            'categoryoptiongroupid'=>$donor_categoryoptiongroupid
+                        );
+
+                        $this->db->insert("categoryoptiongroupmembers", $categoryoptiongroupmemebers_donor);
+
+
+                    }
+
+
+
+                }
+
                 //Step4 Insert Programs to attribution_hierarchy_programs
-                foreach ($this->input->post("programs") as $row) {
+                foreach ($programs as $row) {
                     $programinfo = $this->db->get_where("attribution_programs", array("program_id" => $row));
                     $dets = $programinfo->row();
                     $hierarchy_programs = array(
@@ -113,16 +226,20 @@
 
 
                 //Step 3 Add Option To Category
-                $categoryid=$this->db->get_where('dataelementcategory',array('name'=>'Mechanisms'))->row()->categoryid;
+                $categoryid=0;
+                $category_item=$this->db->get_where('dataelementcategory',array('name'=>'Mechanisms'));
+                if(sizeof($category_item->result())>0){
+                    $categoryid=$category_item->row()->categoryid;
+                }
                 $maxorder= $this->db->query("SELECT MAX(sort_order) as max FROM categories_categoryoptions WHERE categoryid=$categoryid ")->row()->max;
                 $this->db->insert('categories_categoryoptions',array('categoryoptionid'=>$categoryoption_id,'categoryid'=>$categoryid,'sort_order'=>$maxorder+1));
 
                 //Step 4 create CategoryOptionCombo : Attribution Key(new generated categoryoptioncomboid)
-                $optioncombo_uid=substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+                $optioncombo_shuffle=substr(str_shuffle(time().""."0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
                 $categoryoptioncomboid=$this->db->query('Select max(categoryoptioncomboid) as maxs from categoryoptioncombo')->row()->maxs+1;
                 $combo=array(
                     'categoryoptioncomboid'=>$categoryoptioncomboid,
-                    'uid'=>substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length),
+                    'uid'=>substr(str_shuffle($optioncombo_shuffle), 0, $length),
                     'created'=>date("Y-m-d"),
                     'lastupdated'=>date("Y-m-d")
                 );
@@ -145,8 +262,8 @@
 
                 //Step 7 Update  attribution_keys
                 $attribution_keys=array(
-                    'datim_id'=>$datim_id,
-                    'mechanism_id'=>$kepms_id,
+                    'datim_id'=>$code,
+                    'mechanism_id'=>0,
                     'mechanism_name'=>$mechanism_name,
                     'mechanism_uid'=>$mechanism_uid,
                     'usergroup_id'=>$usergroup_id,
@@ -161,8 +278,8 @@
                 //Step 8 : Insert Data to attribution_mechanisms
                 $mechanisms=array(
                     "mechanism_name"=>$mechanism_name,
-                    "datim_id"=>$datim_id,
-                    "mechanism_id"=>$kepms_id,
+                    "datim_id"=>$code,
+                    "mechanism_id"=>0,
                     "mechanism_uid"=>$mechanism_uid,
                     "attribution_key"=>$categoryoptioncomboid,
                     "partner_name"=>$partner_name,
@@ -218,7 +335,8 @@
     {
         $usergroupid = $this->session->userdata('group_uid');
         $query = "  SELECT * FROM  attribution_hierarchy_programs ahp WHERE  NOT EXISTS
-  (SELECT * FROM   attribution_hierarchy_programs ahpa WHERE  ahpa.hierarchy_uid='$mechanism_uid' and ahp.program_id = ahpa.program_id) and  ahp.hierarchy_uid='$usergroupid'";
+  (SELECT * FROM   attribution_hierarchy_programs ahpa WHERE  ahpa.hierarchy_uid='$mechanism_uid'
+  and ahp.program_id = ahpa.program_id) and  ahp.hierarchy_uid='$usergroupid'";
         $list = $this->db->query($query);
         if (sizeof($list->result()) >= 1) {
             return $list->result();

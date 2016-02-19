@@ -221,7 +221,10 @@ class Development_partners_model extends CI_Model
                     "name" => $name,
                     "shortname" => $shortname,
                     "level" => "3",
-                    "parentid" => $this->session->userdata('group_uid')
+                    "parentid" => $this->session->userdata('group_uid'),
+                    "usergroup_id"=>$usergroup_id,
+                    "categorycombo_id" => 0,
+                    "categoryoption_id" => 0
                 );
 
                 $this->db->insert("attribution_hierarchy", $hierarchy);
