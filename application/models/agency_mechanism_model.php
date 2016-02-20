@@ -60,7 +60,10 @@
                     "code" => $mechanism_uid,
                     "name" => $mechanism_name,
                     'created' => date("Y-m-d"),
-                    'lastupdated' => date("Y-m-d")
+                    'lastupdated' => date("Y-m-d"),
+                    "userid" => $this->session->userdata("userid"),
+                    "publicaccess" => "rw------",
+                    'attributionroleid' => 5
                 );
                 $this->db->insert("usergroup", $usergroup);
 
