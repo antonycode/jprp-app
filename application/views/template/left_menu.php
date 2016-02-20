@@ -107,7 +107,7 @@
 		                        <li class='active'>
 		                            <a href=' ".base_url()."moh_manager'>
 		                                <i class='fa fa-dashboard'></i>
-		                                <span>MOH</span>
+		                                <span>DevPartner Manager</span>
 		                            </a>
 		                        </li>                                   
                                  
@@ -132,7 +132,7 @@
 		                        <li class='active'>
 		                            <a href=' ".base_url()."development_partners'>
 		                                <i class='fa fa-dashboard'></i>
-		                                <span>Development Partner</span>
+		                                <span>Agency Manager</span>
 		                            </a>
 		                        </li>                                   
                                  
@@ -157,7 +157,7 @@
 		                        <li class='active'>
 		                            <a href=' ".base_url()."agency_mechanism'>
 		                                <i class='fa fa-dashboard'></i>
-		                                <span>Agency</span>
+		                                <span>Mechanism Manager</span>
 		                            </a>
 		                        </li>                                   
                                  

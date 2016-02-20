@@ -433,7 +433,7 @@
             <div class="col-md-5">
                 <ul>
                     <li>
-                        <h4>Development Partner Details</h4>
+                        <h4><strong>Partner Details</strong></h4>
                     </li>
                     <li>
                         <label for="name">Name:</label>
@@ -456,14 +456,13 @@
             <div class="col-md-6">
                 <ul>
                     <li>
-                        <h4>Admin User Details</h4>
+                        <h4><strong>Admin User Details</strong></h4>
                     </li>
                     <li>
                         <label for="name">Username:</label>
                         <input type="text" name="username" id="username" placeholder="username"
                                required pattern="{5,}$"/>
-                        <span class="form_hint">username Must Be Of Atleast 5 Characters</span>
-                        <span id="usernamecheck"></span>
+                        <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 5 Characters</span>
                     </li>
                     <li>
                         <label for="name">FirstName:</label>
@@ -495,7 +494,7 @@
 
         </div>
 
-        <div>
+        <div class="row">
             <ul>
                 <li>
                     <div>
@@ -621,9 +620,9 @@
 
     $(document).ready(function () {
         //Check uniqueness of the username
-        $('#username').keypress(function(){
+        $('#username').keyup(function(){
             var username=$(this).val();
-            var check_username_url="<?php echo base_url('development_partners/check_username_uniqueness/') ?>";
+            var check_username_url="<?php echo base_url('moh_manager/check_username_uniqueness/') ?>";
             if(username.length>4){
                 //alert(username);
                 $.ajax({
@@ -633,7 +632,14 @@
                     data: {"username": username},
                     contentType: 'application/x-www-form-urlencoded',
                     success: function (data, textStatus, jQxhr) {
-//                        $('#usernamecheck').html(data);
+                        if(data=="True"){
+                            $('#usernamecheck').html("Username Exists");
+                            $("#username")[0].setCustomValidity('Username Exists');
+                        }
+                        else{
+                            $('#usernamecheck').html("Okay");
+                            $("#username")[0].setCustomValidity('');
+                        }
                     },
                     error: function (jqXhr, textStatus, errorThrown) {
                         console.log(errorThrown);

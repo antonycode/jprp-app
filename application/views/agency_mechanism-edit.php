@@ -250,20 +250,16 @@
                 <span class="form_hint">Mechanism Name Must Be Of Atleast 10 Characters</span>
             </li>
             <li>
-                <label for="name">Datim ID:</label>
-                <input type="text" name="datim_id" readonly  placeholder="11243" value="<?php if(isset($mechanism->datim_id)) echo $mechanism->datim_id; ?>"  required pattern="[1-9][0-9]{4,}"  />
-<!--                <span class="form_hint">Mechanism ID Must Be Of Atleast 4 Integer Character Long</span>-->
+                <label for="name">Code:</label>
+                <input type="text" name="code" readonly  placeholder="e.g Datim ID" value="<?php if(isset($mechanism->datim_id)) echo $mechanism->datim_id; ?>"  required pattern="[1-9][0-9]{4,}"  />
+                <span class="form_hint">Code Must Be Of Atleast 4 Integer Character Long</span>
             </li>
             <li>
                 <label for="name">Partner Name:</label>
                 <input type="text" name="partner_name" id=""  placeholder="South Rift Valley VCT" value="<?php if(isset($mechanism->partner_name)) echo $mechanism->partner_name; ?>"  required pattern="{10,}"  />
                 <span class="form_hint">Partner Name Must Be Of Atleast 10 Characters</span>
             </li>
-            <li>
-                <label for="name">KePMS ID:</label>
-                <input type="text" name="kepms_id" id=""  placeholder="124" value="<?php if($mechanism->mechanism_id) echo $mechanism->mechanism_id; ?>"  pattern="[1-9][0-9]{1,}"  />
-                <span class="form_hint">Mechanism ID Must Be Of Atleast 1 Integer Character Long</span>
-            </li>
+
             <li>
                 <label for="name">Mechanism Start Date:</label>
                 <input type="text" name="start_date" id="start_date" required pattern="\d{4}-\d{1,2}-\d{1,2}" value="<?php if(isset($mechanism->start_date))echo $mechanism->start_date; ?>"  placeholder="yyyy-mm-dd"/>

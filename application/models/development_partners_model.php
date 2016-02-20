@@ -256,104 +256,110 @@ class Development_partners_model extends CI_Model
                 $email=$this->input->post('email');
                 $phonenumber=$this->input->post('phonenumber');
 
-                //Creating the userid
-                $this->db->select_max('userinfoid');
-                $userid = 1 + (integer)$this->db->get('userinfo')->row()->userinfoid;
-                //Creating an uid
-                $length = 11;
-                $random_str = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
-                $time = time();
-                $user_uid = substr(hash('md5', $time . '' . $random_str), 0, $length);
+                //check if the username exists
+                $query = $this->db->get_where("users", array("username" => $username));
+                if(sizeof($query->result())==0){
 
-                //Orgunit Kenya Level
-                $national_level=52;
-                $orgunit = $this->db->get_where("organisationunit", array("name" => "Kenya"));
-                if(sizeof($orgunit->result())>0){
-                    $national_level=$orgunit->row()->organisationunitid;
+                    //Creating the userid
+                    $this->db->select_max('userinfoid');
+                    $userid = 1 + (integer)$this->db->get('userinfo')->row()->userinfoid;
+                    //Creating an uid
+                    $length = 11;
+                    $random_str = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+                    $time = time();
+                    $user_uid = substr(hash('md5', $time . '' . $random_str), 0, $length);
 
-                }
+                    //Orgunit Kenya Level
+                    $national_level=52;
+                    $orgunit = $this->db->get_where("organisationunit", array("name" => "Kenya"));
+                    if(sizeof($orgunit->result())>0){
+                        $national_level=$orgunit->row()->organisationunitid;
 
-                //DHIS2 Role ID
-                $user_role_id=0;
-                $role = $this->db->get_where("userrole", array("name" => "Agency Admin"));
-                if(sizeof($orgunit->result())>0){
-                    $user_role_id=$role->row()->userroleid;
+                    }
 
-                }
+                    //DHIS2 Role ID
+                    $user_role_id=0;
+                    $role = $this->db->get_where("userrole", array("name" => "Agency Admin"));
+                    if(sizeof($orgunit->result())>0){
+                        $user_role_id=$role->row()->userroleid;
 
-                //Dimension Analysis dataelementcategoryid
-                $dataelementcategoryid=0;
-                $dimension = $this->db->get_where("dataelementcategory", array("name" => "Mechanisms"));
-                if(sizeof($dimension->result())>0){
-                    $dataelementcategoryid=$dimension->row()->categoryid;
+                    }
 
-                }
+                    //Dimension Analysis dataelementcategoryid
+                    $dataelementcategoryid=0;
+                    $dimension = $this->db->get_where("dataelementcategory", array("name" => "Mechanisms"));
+                    if(sizeof($dimension->result())>0){
+                        $dataelementcategoryid=$dimension->row()->categoryid;
 
-                $userinfo=array(
-                    'userinfoid'=>$userid,
-                    'uid'=>$user_uid,
-                    'surname'=>$lastname,
-                    'firstname'=>$firstname,
-                    'email'=>$email,
-                    'phonenumber'=>$phonenumber,
-                    'created'=>date('Y-m-d H:m:s'),
-                    'lastupdated'=>date('Y-m-d H:m:s')
-                );
+                    }
 
-                //Create the user in userinfo then in users
-                if($this->db->insert("userinfo", $userinfo)){
-
-                    $users=array(
-                        'userid'=>$userid,
-                        'username'=>$username,
-                        'password'=>$default_password,
-                        'passwordlastupdated'=>date('Y-m-d H:m:s'),
+                    $userinfo=array(
+                        'userinfoid'=>$userid,
+                        'uid'=>$user_uid,
+                        'surname'=>$lastname,
+                        'firstname'=>$firstname,
+                        'email'=>$email,
+                        'phonenumber'=>$phonenumber,
                         'created'=>date('Y-m-d H:m:s'),
-                        'invitation'=>"False",
-                        'selfregistered'=>"False",
-                        'disabled'=>"False"
+                        'lastupdated'=>date('Y-m-d H:m:s')
                     );
 
-                    if($this->db->insert('users',$users))
-                    {
-                        //Usergroup assignment
-                        $usergroupmembers=array(
+                    //Create the user in userinfo then in users
+                    if($this->db->insert("userinfo", $userinfo)){
+
+                        $users=array(
                             'userid'=>$userid,
-                            'usergroupid'=>$usergroup_id
+                            'username'=>$username,
+                            'password'=>$default_password,
+                            'passwordlastupdated'=>date('Y-m-d H:m:s'),
+                            'created'=>date('Y-m-d H:m:s'),
+                            'invitation'=>"False",
+                            'selfregistered'=>"False",
+                            'disabled'=>"False"
                         );
 
-                        //Data entry orgunit
-                        $usermembership=array(
-                            'userinfoid'=>$userid,
-                            'organisationunitid'=>$national_level
-                        );
+                        if($this->db->insert('users',$users))
+                        {
+                            //Usergroup assignment
+                            $usergroupmembers=array(
+                                'userid'=>$userid,
+                                'usergroupid'=>$usergroup_id
+                            );
 
-                        //Data view Orgunit
-                        $userdatavieworgunits=array(
-                            'userinfoid'=>$userid,
-                            'organisationunitid'=>$national_level
-                        );
+                            //Data entry orgunit
+                            $usermembership=array(
+                                'userinfoid'=>$userid,
+                                'organisationunitid'=>$national_level
+                            );
 
-                        //DHIS2 user role
-                        $userrolemembers=array(
-                            'userid'=>$userid,
-                            'userroleid'=>$user_role_id
-                        );
+                            //Data view Orgunit
+                            $userdatavieworgunits=array(
+                                'userinfoid'=>$userid,
+                                'organisationunitid'=>$national_level
+                            );
 
-                        //Dimension Analysis-(mechanisms)
-                        $users_catdimensionconstraints=array(
-                            'userid'=>$userid,
-                            'dataelementcategoryid'=>$dataelementcategoryid
-                        );
+                            //DHIS2 user role
+                            $userrolemembers=array(
+                                'userid'=>$userid,
+                                'userroleid'=>$user_role_id
+                            );
+
+                            //Dimension Analysis-(mechanisms)
+                            $users_catdimensionconstraints=array(
+                                'userid'=>$userid,
+                                'dataelementcategoryid'=>$dataelementcategoryid
+                            );
 
 
 
-                        //Updating the assignments
-                        $this->db->insert('usergroupmembers', $usergroupmembers);
-                        $this->db->insert('usermembership', $usermembership);
-                        $this->db->insert('userdatavieworgunits',$userdatavieworgunits);
-                        $this->db->insert('userrolemembers', $userrolemembers);
-                        $this->db->insert('users_catdimensionconstraints', $users_catdimensionconstraints);
+                            //Updating the assignments
+                            $this->db->insert('usergroupmembers', $usergroupmembers);
+                            $this->db->insert('usermembership', $usermembership);
+                            $this->db->insert('userdatavieworgunits',$userdatavieworgunits);
+                            $this->db->insert('userrolemembers', $userrolemembers);
+                            $this->db->insert('users_catdimensionconstraints', $users_catdimensionconstraints);
+                        }
+
                     }
 
                 }

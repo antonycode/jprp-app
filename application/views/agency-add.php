@@ -303,7 +303,7 @@
                     <li>
                         <label for="name">Username:</label>
                         <input type="text" name="username" id="username" placeholder="username" required pattern="[A-Za-z\s]{6,60}$"/>
-                        <span class="form_hint">username Must Be Of Atleast 6 Characters</span>
+                        <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 6 Characters</span>
                     </li>
                     <li>
                         <label for="name">FirstName:</label>
@@ -451,6 +451,40 @@
         this.dxSDate = sdate;
         this.dxEDate = edate;
     }
+
+    $(document).ready(function(){
+        //Check uniqueness of the username
+        $('#username').keyup(function(){
+            var username=$(this).val();
+            var check_username_url="<?php echo base_url('development_partners/check_username_uniqueness/') ?>";
+            if(username.length>4){
+                //alert(username);
+                $.ajax({
+                    url: check_username_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"username": username},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#usernamecheck').html("Username Exists");
+                            $("#username")[0].setCustomValidity('Username Exists');
+                        }
+                        else{
+                            $('#usernamecheck').html("Okay");
+                            $("#username")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+
+    });
 
 
 </script>

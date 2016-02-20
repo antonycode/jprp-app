@@ -137,7 +137,7 @@
              //Check If User Has Authority(program_magement)
              if ($this->user_model->get_user_role('program_management', $this->session->userdata('userroleid'))) {
                  if ($progress = $this->agency_mechanism_model->save_mechanism_update() ===TRUE) {
-                     $message = "Agency Has Successfully been Updated";
+                     $message = "Mechanism Has Successfully been Updated";
                      redirect("/agency_mechanism/index/$message", 'refresh');
                  } else {
                      $message =  $progress;
@@ -163,6 +163,20 @@
                      echo $data = json_encode($result);
                  }
              }
+         }
+
+     }
+
+     public function check_username_uniqueness(){
+
+         $username=$this->agency_mechanism_model->check_username_uniqueness();
+
+         if($username===1){
+
+             echo "True";
+         }
+         else{
+             echo "False";
          }
 
      }

@@ -25,7 +25,7 @@
     <img alt="Kidmondo_face_sad" src="<?php echo base_url(); ?>/style/error/kidmondo_face_sad.gif" />
     <h1>We're sorry...</h1>
     <p><?php echo $message; ?></p>
-    <p><a href="http://localhost:8080/dhis">Return to K2D</a></p>
+    <p><a href="http://localhost:8080/">Return to PHES</a></p>
   </div>
 </body>
 </html>

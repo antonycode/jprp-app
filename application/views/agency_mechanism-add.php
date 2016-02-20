@@ -230,81 +230,133 @@
     </script>
 
     <form class="donor_form" id="agency_details" action="<?php echo base_url('agency_mechanism/save_mechanism')?>" method="post" style="margin-left: -30px ">
-        <ul>
-            <li>
-                <h2>Mechanism Details </h2>
-                <span class="required_notification">* Denotes Required Field</span>
-            </li>
-            <li>
-                <label for="name">Mechanism Name:</label>
-                <input type="text" name="mechanism_name" id=""  placeholder="9171 - South Rift Valley"  required pattern="{10,}"  />
-                <span class="form_hint">Mechanism Name Must Be Of Atleast 10 Characters</span>
-            </li>
-            <li>
-                <label for="name">Code:</label>
-                <input type="text" name="code" id=""  placeholder="e.g Datim ID"  required pattern="[1-9][0-9]{4,}"  />
-                <span class="form_hint">Mechanism ID Must Be Of Atleast 4 Integer Character Long</span>
-            </li>
-            <li>
-                <label for="name">Partner Name:</label>
-                <input type="text" name="partner_name" id=""  placeholder="South Rift Valley VCT"  required pattern="{10,}"  />
-                <span class="form_hint">Partner Name Must Be Of Atleast 10 Characters</span>
-            </li>
-            <li>
-                <label for="name">Mechanism Start Date:</label>
-                <input type="text" name="start_date" id="start_date" required pattern="\d{4}-\d{1,2}-\d{1,2}"  placeholder="yyyy-mm-dd"/>
-                <span class="form_hint">Date format must be yyyy-mm-dd</span>
-            </li>
-            <li>
-                <label for="name">Mechanism End Date:</label>
-                <input type="text" name="end_date" id="end_date" required pattern="\d{4}-\d{1,2}-\d{1,2}" placeholder="yyyy-mm-dd"/>
-                <span class="form_hint">Date format must be yyyy-mm-dd</span>
-            </li>
-            <li>
-                <div>
-                    <label for="datasets" style="font-size: 16px; width: 200px">Program Search </label>
-                    <input id="textbox" type="text" class="form-control" placeholder="Program Search"/>
-                </div>
-                <section class="container">
+        <div class="row">
+            <div class="col-md-5">
+                <ul>
+                    <li>
+                        <h4><strong>Mechanism Details </strong></h4>
+                    </li>
+                    <li>
+                        <label for="name">Mechanism Name:</label>
+                        <input type="text" name="mechanism_name" id=""  placeholder="9171 - South Rift Valley"  required pattern="{10,}"  />
+                        <span class="form_hint">Mechanism Name Must Be Of Atleast 10 Characters</span>
+                    </li>
+                    <li>
+                        <label for="name">Code:</label>
+                        <input type="text" name="code" id=""  placeholder="e.g Datim ID"  required pattern="[1-9][0-9]{4,}"  />
+                        <span class="form_hint">Code Must Be Of Atleast 4 Integer Character Long</span>
+                    </li>
+                    <li>
+                        <label for="name">Partner Name:</label>
+                        <input type="text" name="partner_name" id=""  placeholder="South Rift Valley VCT"  required pattern="{10,}"  />
+                        <span class="form_hint">Partner Name Must Be Of Atleast 10 Characters</span>
+                    </li>
+                    <li>
+                        <label for="name">Mechanism Start Date:</label>
+                        <input type="text" name="start_date" id="start_date" required pattern="\d{4}-\d{1,2}-\d{1,2}"  placeholder="yyyy-mm-dd"/>
+                        <span class="form_hint">Date format must be yyyy-mm-dd</span>
+                    </li>
+                    <li>
+                        <label for="name">Mechanism End Date:</label>
+                        <input type="text" name="end_date" id="end_date" required pattern="\d{4}-\d{1,2}-\d{1,2}" placeholder="yyyy-mm-dd"/>
+                        <span class="form_hint">Date format must be yyyy-mm-dd</span>
+                    </li>
+                </ul>
+            </div>
 
+            <div class="col-md-6">
+                <ul>
+                    <li>
+                        <h4><strong>Admin User Details</strong></h4>
+                    </li>
+                    <li>
+                        <label for="name">Username:</label>
+                        <input type="text" name="username" id="username" placeholder="username"
+                               required pattern="{5,}$"/>
+                        <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 5 Characters</span>
+
+                    </li>
+                    <li>
+                        <label for="name">FirstName:</label>
+                        <input type="text" name="firstname" id="firstname" placeholder="First Name" required pattern="[A-Za-z\s]{2,80}"/>
+                        <span class="form_hint">First Name Must Be Of Atleast 2 Characters</span>
+                    </li>
+                    <li>
+                        <label for="name">LastName:</label>
+                        <input type="text" name="lastname" id="lastname" placeholder="Last Name" required pattern="[A-Za-z\s]{2,20}"/>
+                        <span class="form_hint">Last Name Must Be Of Atleast 2 Characters</span>
+                    </li>
+
+                    <li>
+                        <label for="name">Email:</label>
+                        <input type="text" name="email" id="email" placeholder="Email"
+                               required pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"/>
+                        <span class="form_hint">A valid Email Address</span>
+                    </li>
+
+                    <li>
+                        <label for="name">Phone Number:</label>
+                        <input type="text" name="phonenumber" id="phonenumber" placeholder="Phone Number"
+                               pattern="[0-9]{10,}$" maxlength="13"/>
+                        <span class="form_hint">A valid Phone Number</span>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <ul>
+                <li>
                     <div>
-                        <div>
-                            <label for="name" style="font-size: 16px; width: 200px">Programs </label>
-                        </div>
-                        <div>
-                            <select id="leftValues" size="10" multiple style="width:330px; height:250px;">
-                                <?php
-                                if ($programs!='') {
-                                    foreach ($programs as $row) {
-                                        echo "<option value='$row->program_id'>$row->program_name</option>";
-                                    }
-                                }
-                                ?>
-                            </select>
-                        </div>
+                        <label for="datasets" style="font-size: 16px; width: 200px">Program Search </label>
+                        <input id="textbox" type="text" class="form-control" placeholder="Program Search"/>
                     </div>
-                    <div style="margin-top: 10%;">
-                        <input type="button" class="btn btn-md" id="btnRight" value="&gt;&gt;"/>
-                        <input type="button" class="btn btn-md" id="btnLeft" value="&lt;&lt;" style="margin-top: 30px"/>
-                    </div>
-                    <div>
+                    <section class="container">
+
                         <div>
                             <div>
-                                <label for="name" style="font-size: 16px; margin-left:0px; width: 200px">Selected Programs </label>
+                                <label for="name" style="font-size: 16px; width: 200px">Programs </label>
                             </div>
                             <div>
-                                <select id="rightValues" size="10" name='programs[]' style="width:330px; height:250px;" multiple required >
+                                <select id="leftValues" size="10" multiple style="width:330px; height:250px;">
+                                    <?php
+                                    if ($programs!='') {
+                                        foreach ($programs as $row) {
+                                            echo "<option value='$row->program_id'>$row->program_name</option>";
+                                        }
+                                    }
+                                    ?>
                                 </select>
                             </div>
                         </div>
-                    </div>
+                        <div style="margin-top: 10%;">
+                            <input type="button" class="btn btn-md" id="btnRight" value="&gt;&gt;"/>
+                            <input type="button" class="btn btn-md" id="btnLeft" value="&lt;&lt;" style="margin-top: 30px"/>
+                        </div>
+                        <div>
+                            <div>
+                                <div>
+                                    <label for="name" style="font-size: 16px; margin-left:0px; width: 200px">Selected Programs </label>
+                                </div>
+                                <div>
+                                    <select id="rightValues" size="10" name='programs[]' style="width:330px; height:250px;" multiple required >
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
 
-                </section>
-            </li>
-            <li style="margin-left: 20%; width: 100%">
-                <button class="submit" type="submit">Submit</button>
-            </li>
-        </ul>
+                    </section>
+                </li>
+                <li style="margin-left: 50%; width: 100%">
+                    <button class="submit" type="submit">Submit</button>
+                </li>
+            </ul>
+        </div>
+
+
+
 
     </form>
 
@@ -373,6 +425,36 @@
 
 
     $(document).ready(function(){
+
+        //Check uniqueness of the username
+        $('#username').keyup(function(){
+            var username=$(this).val();
+            var check_username_url="<?php echo base_url('development_partners/check_username_uniqueness/') ?>";
+            if(username.length>4){
+                //alert(username);
+                $.ajax({
+                    url: check_username_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"username": username},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#usernamecheck').html("Username Exists");
+                            $("#username")[0].setCustomValidity('Username Exists');
+                        }
+                        else{
+                            $('#usernamecheck').html("Okay");
+                            $("#username")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
 
         $("#start_date").datepicker({
             defaultDate: "+1w",

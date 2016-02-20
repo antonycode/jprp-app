@@ -292,6 +292,121 @@
 
                 $this->db->insert("attribution_mechanisms",$mechanisms);
 
+                //*****************************************************************************//
+                //Create default Admin User
+
+                $default_password='$2a$10$pcz7WFfL6bSw7nrMadpHYu69gSN/sA6jwKUR7WYN4kTm4Z7LpdkWO';
+                $username=$this->input->post('username');
+                $firstname=$this->input->post('firstname');
+                $lastname=$this->input->post('lastname');
+                $email=$this->input->post('email');
+                $phonenumber=$this->input->post('phonenumber');
+
+
+                //check if the username exists
+                $query = $this->db->get_where("users", array("username" => $username));
+                if(sizeof($query->result())==0) {
+                    //Creating the userid
+                    $this->db->select_max('userinfoid');
+                    $userid = 1 + (integer)$this->db->get('userinfo')->row()->userinfoid;
+                    //Creating an uid
+                    $length = 11;
+                    $random_str = substr(str_shuffle("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
+                    $time = time();
+                    $user_uid = substr(hash('md5', $time . '' . $random_str), 0, $length);
+
+                    //Orgunit Kenya Level
+                    $national_level = 52;
+                    $orgunit = $this->db->get_where("organisationunit", array("name" => "Kenya"));
+                    if (sizeof($orgunit->result()) > 0) {
+                        $national_level = $orgunit->row()->organisationunitid;
+
+                    }
+
+                    //DHIS2 Role ID
+                    $user_role_id = 0;
+                    $role = $this->db->get_where("userrole", array("name" => "Implementing Partner Admin"));
+                    if (sizeof($orgunit->result()) > 0) {
+                        $user_role_id = $role->row()->userroleid;
+
+                    }
+
+                    //Dimension Analysis dataelementcategoryid
+                    $dataelementcategoryid = 0;
+                    $dimension = $this->db->get_where("dataelementcategory", array("name" => "Mechanisms"));
+                    if (sizeof($dimension->result()) > 0) {
+                        $dataelementcategoryid = $dimension->row()->categoryid;
+
+                    }
+
+                    $userinfo = array(
+                        'userinfoid' => $userid,
+                        'uid' => $user_uid,
+                        'surname' => $lastname,
+                        'firstname' => $firstname,
+                        'email' => $email,
+                        'phonenumber' => $phonenumber,
+                        'created' => date('Y-m-d H:m:s'),
+                        'lastupdated' => date('Y-m-d H:m:s')
+                    );
+
+                    //Create the user in userinfo then in users
+                    if ($this->db->insert("userinfo", $userinfo)) {
+
+                        $users = array(
+                            'userid' => $userid,
+                            'username' => $username,
+                            'password' => $default_password,
+                            'passwordlastupdated' => date('Y-m-d H:m:s'),
+                            'created' => date('Y-m-d H:m:s'),
+                            'invitation' => "False",
+                            'selfregistered' => "False",
+                            'disabled' => "False"
+                        );
+
+                        if ($this->db->insert('users', $users)) {
+                            //Usergroup assignment
+                            $usergroupmembers = array(
+                                'userid' => $userid,
+                                'usergroupid' => $usergroup_id
+                            );
+
+                            //Data entry orgunit
+                            $usermembership = array(
+                                'userinfoid' => $userid,
+                                'organisationunitid' => $national_level
+                            );
+
+                            //Data view Orgunit
+                            $userdatavieworgunits = array(
+                                'userinfoid' => $userid,
+                                'organisationunitid' => $national_level
+                            );
+
+                            //DHIS2 user role
+                            $userrolemembers = array(
+                                'userid' => $userid,
+                                'userroleid' => $user_role_id
+                            );
+
+                            //Dimension Analysis-(mechanisms)
+                            $users_catdimensionconstraints = array(
+                                'userid' => $userid,
+                                'dataelementcategoryid' => $dataelementcategoryid
+                            );
+
+
+                            //Updating the assignments
+                            $this->db->insert('usergroupmembers', $usergroupmembers);
+                            $this->db->insert('usermembership', $usermembership);
+                            $this->db->insert('userdatavieworgunits', $userdatavieworgunits);
+                            $this->db->insert('userrolemembers', $userrolemembers);
+                            $this->db->insert('users_catdimensionconstraints', $users_catdimensionconstraints);
+                        }
+
+                    }
+                }
+
 
                 return TRUE;
 
@@ -369,16 +484,12 @@
         $mechanism_name = $this->input->post('mechanism_name');
         $mechanism_uid = $this->input->post('mechanism_uid');
         $partner_name = $this->input->post('partner_name');
-        $datim_id = $this->input->post('datim_id');
-        $kepms_id = $this->input->post('kepms_id');
+        $code = $this->input->post('code');
         $start_date = $this->input->post('start_date');
         $end_date = $this->input->post('end_date');
         $programs=$this->input->post('programs');
 
-        if($kepms_id==="")
-        {
-            $kepms_id=0;
-        }
+
 
         if(!$mechanism_uid){
             return "Invalid Mechanism UID";
@@ -387,12 +498,12 @@
         // Update attribution mechanisms table
         $mechanisms=array(
             "mechanism_name"=>$mechanism_name,
-            "mechanism_id"=>$kepms_id,
+            "mechanism_id"=>0,
             "partner_name"=>$partner_name,
             'start_date'=>$start_date,
             'end_date'=>$end_date);
 
-        $this->db->where('datim_id', $datim_id);
+        $this->db->where('mechanism_uid', $mechanism_uid);
         if (!$this->db->update("attribution_mechanisms",$mechanisms)) {
             return "Attribution Update";
         }
@@ -400,11 +511,11 @@
         // Update attribution keys table
         $attribution_keys=array(
             "mechanism_name"=>$partner_name,
-            "mechanism_id"=>$kepms_id,
+            "mechanism_id"=>0,
             'start_date'=>$start_date,
             'end_date'=>$end_date);
 
-        $this->db->where('datim_id', $datim_id);
+        $this->db->where('mechanism_uid', $mechanism_uid);
         if(!$this->db->update("attribution_keys",$attribution_keys)) {
             return "Attribution Update";
         }
@@ -433,7 +544,7 @@
 
 //        Update attribution_hierarchy table
         $hierarchy = array(
-            "code" => $datim_id,
+            "code" => $code,
             "name" => $mechanism_name,
             "shortname" => $partner_name
         );
@@ -525,6 +636,17 @@
             'facilities_dsd'=>$number_facilities_dsd);
 
         return $data;
+    }
+
+    //Check username uniqueness
+    public function check_username_uniqueness(){
+        $username=$this->input->post('username');
+        $query = $this->db->get_where("users", array("username" => $username));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
     }
 
 }

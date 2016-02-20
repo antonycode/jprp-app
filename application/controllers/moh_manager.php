@@ -140,4 +140,18 @@ class Moh_manager extends CI_Controller {
 			}
 		}
 	}
+
+	public function check_username_uniqueness(){
+
+		$username=$this->moh_model->check_username_uniqueness();
+
+		if($username===1){
+
+			echo "True";
+		}
+		else{
+			echo "False";
+		}
+
+	}
 }

@@ -152,10 +152,15 @@ class Development_partners extends CI_Controller{
     public function check_username_uniqueness(){
 
         $username=$this->development_partners_model->check_username_uniqueness();
+
         if($username===1){
+
             echo "True";
         }
-        echo "False";
+        else{
+            echo "False";
+        }
+
     }
 
 
