@@ -489,7 +489,31 @@ class Moh_model extends CI_Model
     //Check username uniqueness
     public function check_username_uniqueness(){
         $username=$this->input->post('username');
-        $query = $this->db->get_where("users", array("username" => $username));
+        $query = $this->db->get_where("users", array("lower(username)" => strtolower($username)));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
+    }
+
+    //Check devpartner name's uniqueness
+    public function check_devpartner_uniqueness(){
+
+        $devpartner=$this->input->post('devpartner');
+        $query = $this->db->get_where("attribution_hierarchy", array("lower(name)" => strtolower($devpartner)));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
+    }
+
+    //Check devpartner code uniqueness
+    public function check_devpartner_code_uniqueness(){
+
+        $devpartner_code=$this->input->post('devpartner_code');
+        $query = $this->db->get_where("attribution_hierarchy", array("code" => (string)$devpartner_code));
         if(sizeof($query->result())>0){
             return 1;
         }

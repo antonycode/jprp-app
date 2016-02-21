@@ -395,18 +395,18 @@
                         </li>
                         <li>
                             <label for="name">Name:</label>
-                            <input type="text" name="name" id=""  value='<?php echo $devpartner_details->name; ?>'   required pattern="{2,150}"  />
-                            <span class="form_hint">Development Partner Name Must Be Of Atleast 3 Characters</span>
+                            <input type="text" name="name" id="devpartner"  value='<?php echo $devpartner_details->name; ?>'   required pattern="[A-Za-z\s0-9]{2,150}"  />
+                            <span id="devpartner_hint" class="form_hint">Development Partner Name Must Be Of Atleast 3 Characters</span>
                         </li>                        
                         <li>
                             <label for="name">Short Name:</label>
-                            <input type="text" name="sname" id=""  value='<?php echo $devpartner_details->shortname; ?>' required pattern="{2,20}"  />
+                            <input type="text" name="sname" id=""  value='<?php echo $devpartner_details->shortname; ?>' required pattern="[A-Za-z\s0-9]{2,20}"  />
                             <span class="form_hint">Development Partner Short Name Must Be Of Atleast 2 Characters</span>
                         </li>                         
                         <li>
                             <label for="name">Code:</label>
-                            <input type="text" name="code" id=""  value='<?php echo $devpartner_details->code; ?>'   pattern="[1-9][0-9]{0,10}"  />
-                            <span class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
+                            <input type="text" name="code" id="devpartner_code"  value='<?php echo $devpartner_details->code; ?>'   pattern="[1-9][0-9]{0,10}"  />
+                            <span id="code_hint" class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
                         </li>  
                         <li>
                             <div>
@@ -529,6 +529,68 @@
             }
 
             $(document).ready(function(){
+
+                //Check uniqueness of the devpartnername
+                $('#devpartner').keyup(function(){
+                    var devpartner=$(this).val();
+                    var check_devpartner_url="<?php echo base_url('moh_manager/check_devpartner_uniqueness/') ?>";
+                    if(devpartner.length>2){
+                        //alert(username);
+                        $.ajax({
+                            url: check_devpartner_url,
+                            dataType: 'text',
+                            type: 'post',
+                            data: {"devpartner": devpartner},
+                            contentType: 'application/x-www-form-urlencoded',
+                            success: function (data, textStatus, jQxhr) {
+                                if(data=="True"){
+                                    $('#devpartner_hint').html("<i class='fa fa-times-circle-o'></i>Partner Name Exists");
+                                    $("#devpartner")[0].setCustomValidity('Partner Name Exists');
+                                }
+                                else{
+                                    $('#devpartner_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                                    $("#devpartner")[0].setCustomValidity('');
+                                }
+                            },
+                            error: function (jqXhr, textStatus, errorThrown) {
+                                console.log(errorThrown);
+                            }
+                        });
+
+                    }
+                });
+
+
+                //Check uniqueness of the devpartner code
+                $('#devpartner_code').keyup(function(){
+                    var devpartner=$(this).val();
+                    var check_devpartner_url="<?php echo base_url('moh_manager/check_devpartner_code_uniqueness/') ?>";
+                    if(devpartner.length>2){
+                        //alert(username);
+                        $.ajax({
+                            url: check_devpartner_url,
+                            dataType: 'text',
+                            type: 'post',
+                            data: {"devpartner_code": devpartner},
+                            contentType: 'application/x-www-form-urlencoded',
+                            success: function (data, textStatus, jQxhr) {
+                                if(data=="True"){
+                                    $('#code_hint').html("<i class='fa fa-times-circle-o'></i>Code Exists");
+                                    $("#devpartner_code")[0].setCustomValidity('Code Exists');
+                                }
+                                else{
+                                    $('#code_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                                    $("#devpartner_code")[0].setCustomValidity('');
+                                }
+                            },
+                            error: function (jqXhr, textStatus, errorThrown) {
+                                console.log(errorThrown);
+                            }
+                        });
+
+                    }
+                });
+
 
                 $("#start_date").datepicker({
                   defaultDate: "+1w",

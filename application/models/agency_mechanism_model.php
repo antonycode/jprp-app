@@ -92,6 +92,7 @@
                     "uid" => $mechanism_uid,
                     "code" => $mechanism_uid,
                     "name" => $mechanism_name,
+                    'publicaccess'=>"--------",
                     "shortname" => substr($mechanism_name, 0, 30),
                     'lastupdated' => date("Y-m-d")
                 );
@@ -645,6 +646,30 @@
     public function check_username_uniqueness(){
         $username=$this->input->post('username');
         $query = $this->db->get_where("users", array("username" => $username));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
+    }
+
+    //Check mechanism name's uniqueness
+    public function check_mechanism_uniqueness(){
+
+        $name=$this->input->post('mechanism');
+        $query = $this->db->get_where("attribution_hierarchy", array("lower(name)" => strtolower($name)));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
+    }
+
+    //Check mechanism code uniqueness
+    public function check_mechanism_code_uniqueness(){
+
+        $code=$this->input->post('mechanism_code');
+        $query = $this->db->get_where("attribution_hierarchy", array("code" => (string)$code));
         if(sizeof($query->result())>0){
             return 1;
         }

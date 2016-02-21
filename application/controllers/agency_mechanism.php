@@ -181,6 +181,34 @@
 
      }
 
+     public function check_mechanism_uniqueness(){
+
+         $result=$this->agency_mechanism_model->check_mechanism_uniqueness();
+
+         if($result===1){
+
+             echo "True";
+         }
+         else{
+             echo "False";
+         }
+
+     }
+
+     public function check_mechanism_code_uniqueness(){
+
+         $result=$this->agency_mechanism_model->check_mechanism_code_uniqueness();
+
+         if($result===1){
+
+             echo "True";
+         }
+         else{
+             echo "False";
+         }
+
+     }
+
 
 
  }

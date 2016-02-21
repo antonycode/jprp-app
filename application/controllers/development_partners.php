@@ -163,6 +163,34 @@ class Development_partners extends CI_Controller{
 
     }
 
+    public function check_agency_uniqueness(){
+
+        $result=$this->development_partners_model->check_agency_uniqueness();
+
+        if($result===1){
+
+            echo "True";
+        }
+        else{
+            echo "False";
+        }
+
+    }
+
+    public function check_agency_code_uniqueness(){
+
+        $result=$this->development_partners_model->check_agency_code_uniqueness();
+
+        if($result===1){
+
+            echo "True";
+        }
+        else{
+            echo "False";
+        }
+
+    }
+
 
 
 }

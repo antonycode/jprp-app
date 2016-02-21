@@ -509,5 +509,29 @@ class Development_partners_model extends CI_Model
         return 0;
     }
 
+    //Check agency name's uniqueness
+    public function check_agency_uniqueness(){
+
+        $name=$this->input->post('agency');
+        $query = $this->db->get_where("attribution_hierarchy", array("lower(name)" => strtolower($name)));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
+    }
+
+    //Check agency code uniqueness
+    public function check_agency_code_uniqueness(){
+
+        $code=$this->input->post('agency_code');
+        $query = $this->db->get_where("attribution_hierarchy", array("code" => (string)$code));
+        if(sizeof($query->result())>0){
+            return 1;
+        }
+
+        return 0;
+    }
+
 
 }

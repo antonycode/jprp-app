@@ -238,13 +238,13 @@
                     </li>
                     <li>
                         <label for="name">Mechanism Name:</label>
-                        <input type="text" name="mechanism_name" id=""  placeholder="9171 - South Rift Valley"  required pattern="{10,}"  />
-                        <span class="form_hint">Mechanism Name Must Be Of Atleast 10 Characters</span>
+                        <input type="text" id="mechanism" name="mechanism_name" id=""  placeholder="9171 - South Rift Valley"  required pattern="{10,}"  />
+                        <span id="mechanism_hint" class="form_hint">Mechanism Name Must Be Of Atleast 10 Characters</span>
                     </li>
                     <li>
                         <label for="name">Code:</label>
-                        <input type="text" name="code" id=""  placeholder="e.g Datim ID"  required pattern="[1-9][0-9]{4,}"  />
-                        <span class="form_hint">Code Must Be Of Atleast 4 Integer Character Long</span>
+                        <input id="mechanism_code" type="text" name="code" id=""  placeholder="e.g Datim ID"  required pattern="[1-9][0-9]{4,}"  />
+                        <span id="code_hint" class="form_hint">Code Must Be Of Atleast 4 Integer Character Long</span>
                     </li>
                     <li>
                         <label for="name">Partner Name:</label>
@@ -272,7 +272,7 @@
                     <li>
                         <label for="name">Username:</label>
                         <input type="text" name="username" id="username" placeholder="username"
-                               required pattern="{5,}$"/>
+                               required pattern="[A-Za-z\s0-9]{5,40}"/>
                         <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 5 Characters</span>
 
                     </li>
@@ -446,6 +446,67 @@
                         else{
                             $('#usernamecheck').html("Okay");
                             $("#username")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+        //Check uniqueness of the mechanism name
+        $('#mechanism').keyup(function(){
+            var mechanism=$(this).val();
+            var check_mechanism_url="<?php echo base_url('agency_mechanism/check_mechanism_uniqueness/') ?>";
+            if(mechanism.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_mechanism_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"mechanism": mechanism},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#mechanism_hint').html("<i class='fa fa-times-circle-o'></i>Mechanism Name Exists");
+                            $("#mechanism")[0].setCustomValidity('Mechanism Name Exists');
+                        }
+                        else{
+                            $('#mechanism_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#mechanism")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+
+        //Check uniqueness of the mechanism code
+        $('#mechanism_code').keyup(function(){
+            var mechanism=$(this).val();
+            var check_mechanism_url="<?php echo base_url('agency_mechanism/check_mechanism_code_uniqueness/') ?>";
+            if(mechanism.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_mechanism_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"mechanism_code": mechanism},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#code_hint').html("<i class='fa fa-times-circle-o'></i>Code Exists");
+                            $("#agency_code")[0].setCustomValidity('Code Exists');
+                        }
+                        else{
+                            $('#code_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#agency_code")[0].setCustomValidity('');
                         }
                     },
                     error: function (jqXhr, textStatus, errorThrown) {

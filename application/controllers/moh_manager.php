@@ -154,4 +154,32 @@ class Moh_manager extends CI_Controller {
 		}
 
 	}
+
+	public function check_devpartner_uniqueness(){
+
+		$result=$this->moh_model->check_devpartner_uniqueness();
+
+		if($result===1){
+
+			echo "True";
+		}
+		else{
+			echo "False";
+		}
+
+	}
+
+    public function check_devpartner_code_uniqueness(){
+
+        $result=$this->moh_model->check_devpartner_code_uniqueness();
+
+        if($result===1){
+
+            echo "True";
+        }
+        else{
+            echo "False";
+        }
+
+    }
 }

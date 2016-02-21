@@ -437,18 +437,18 @@
                     </li>
                     <li>
                         <label for="name">Name:</label>
-                        <input type="text" name="name" id="" placeholder="PEPFAR" required pattern="{2,150}"/>
-                        <span class="form_hint">Development Partner Name Must Be Of Atleast 5 Characters</span>
+                        <input type="text" id="devpartner" name="name" id="" placeholder="PEPFAR" required pattern="[A-Za-z\s0-9]{2,150}"/>
+                        <span id="devpartner_hint" class="form_hint">Development Partner Name Must Be Of Atleast 2 Characters</span>
                     </li>
                     <li>
                         <label for="name">Short Name:</label>
-                        <input type="text" name="sname" id="" placeholder="PEPFAR" required pattern="{2,20}"/>
+                        <input type="text" name="sname" id="" placeholder="PEPFAR" required pattern="[A-Za-z\s0-9]{2,20}"/>
                         <span class="form_hint">Development Partner Short Name Must Be Of Atleast 2 Characters</span>
                     </li>
                     <li>
                         <label for="name">Code:</label>
-                        <input type="text" name="code" id="" placeholder="124" pattern="[1-9][0-9]{0,10}"/>
-                        <span class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
+                        <input type="text"  id="devpartner_code" name="code" id="" placeholder="124" pattern="[1-9][0-9]{0,10}"/>
+                        <span id="code_hint" class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
                     </li>
                 </ul>
             </div>
@@ -461,7 +461,7 @@
                     <li>
                         <label for="name">Username:</label>
                         <input type="text" name="username" id="username" placeholder="username"
-                               required pattern="{5,}$"/>
+                               required pattern="[A-Za-z\s0-9]{5,40}"/>
                         <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 5 Characters</span>
                     </li>
                     <li>
@@ -485,7 +485,7 @@
                     <li>
                         <label for="name">Phone Number:</label>
                         <input type="text" name="phonenumber" id="phonenumber" placeholder="Phone Number"
-                               pattern="[0-9]{10,}$" maxlength="13"/>
+                               pattern="[0-9]{10,}$" />
                         <span class="form_hint">A valid Phone Number</span>
                     </li>
 
@@ -633,12 +633,73 @@
                     contentType: 'application/x-www-form-urlencoded',
                     success: function (data, textStatus, jQxhr) {
                         if(data=="True"){
-                            $('#usernamecheck').html("Username Exists");
+                            $('#usernamecheck').html("<i class='fa fa-times-circle-o'></i>Username Exists");
                             $("#username")[0].setCustomValidity('Username Exists');
                         }
                         else{
-                            $('#usernamecheck').html("Okay");
+                            $('#usernamecheck').html("<i class='fa fa-check-circle-o'></i>Okay");
                             $("#username")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+        //Check uniqueness of the devpartnername
+        $('#devpartner').keyup(function(){
+            var devpartner=$(this).val();
+            var check_devpartner_url="<?php echo base_url('moh_manager/check_devpartner_uniqueness/') ?>";
+            if(devpartner.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_devpartner_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"devpartner": devpartner},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#devpartner_hint').html("<i class='fa fa-times-circle-o'></i>Partner Name Exists");
+                            $("#devpartner")[0].setCustomValidity('Partner Name Exists');
+                        }
+                        else{
+                            $('#devpartner_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#devpartner")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+
+        //Check uniqueness of the devpartner code
+        $('#devpartner_code').keyup(function(){
+            var devpartner=$(this).val();
+            var check_devpartner_url="<?php echo base_url('moh_manager/check_devpartner_code_uniqueness/') ?>";
+            if(devpartner.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_devpartner_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"devpartner_code": devpartner},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#code_hint').html("<i class='fa fa-times-circle-o'></i>Code Exists");
+                            $("#devpartner_code")[0].setCustomValidity('Code Exists');
+                        }
+                        else{
+                            $('#code_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#devpartner_code")[0].setCustomValidity('');
                         }
                     },
                     error: function (jqXhr, textStatus, errorThrown) {

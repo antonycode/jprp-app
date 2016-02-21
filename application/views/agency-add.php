@@ -280,18 +280,18 @@
                     </li>
                     <li>
                         <label for="name">Name:</label>
-                        <input type="text" name="name" id="" placeholder="USG" required pattern="[A-Za-z\s]{5,150}"/>
-                        <span class="form_hint">Agency Name Must Be Of Atleast 5 Characters</span>
+                        <input type="text" name="name" id="agency" placeholder="USG" required pattern="[A-Za-z\s0-9]{2,150}"/>
+                        <span id="agency_hint" class="form_hint">Agency Name Must Be Of Atleast 2 Characters</span>
                     </li>
                     <li>
                         <label for="name">Short Name:</label>
-                        <input type="text" name="sname" id="" placeholder="USG" required pattern="[A-Za-z\s]{2,20}"/>
+                        <input type="text" name="sname" id="" placeholder="USG" required pattern="[A-Za-z\s0-9]{2,20}"/>
                         <span class="form_hint">Agency Short Name Must Be Of Atleast 2 Characters</span>
                     </li>
                     <li>
                         <label for="name">Code:</label>
-                        <input type="text" name="code" id="" placeholder="124" pattern="[1-9][0-9]{0,10}"/>
-                        <span class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
+                        <input type="text" name="code" id="agency_code" placeholder="124" pattern="[0-9]{0,10}"/>
+                        <span id="code_hint" class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
                     </li>
                 </ul>
             </div>
@@ -302,8 +302,8 @@
                     </li>
                     <li>
                         <label for="name">Username:</label>
-                        <input type="text" name="username" id="username" placeholder="username" required pattern="[A-Za-z\s]{6,60}$"/>
-                        <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 6 Characters</span>
+                        <input type="text" name="username" id="username" placeholder="username" required pattern="[A-Za-z\s0-9]{5,40}"/>
+                        <span id="usernamecheck" class="form_hint">username Must Be Of Atleast 5 Characters</span>
                     </li>
                     <li>
                         <label for="name">FirstName:</label>
@@ -467,12 +467,73 @@
                     contentType: 'application/x-www-form-urlencoded',
                     success: function (data, textStatus, jQxhr) {
                         if(data=="True"){
-                            $('#usernamecheck').html("Username Exists");
+                            $('#usernamecheck').html("<i class='fa fa-times-circle-o'></i>Username Exists");
                             $("#username")[0].setCustomValidity('Username Exists');
                         }
                         else{
-                            $('#usernamecheck').html("Okay");
+                            $('#usernamecheck').html("<i class='fa fa-check-circle-o'></i>Okay");
                             $("#username")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+        //Check uniqueness of the agency name
+        $('#agency').keyup(function(){
+            var agency=$(this).val();
+            var check_agency_url="<?php echo base_url('development_partners/check_agency_uniqueness/') ?>";
+            if(agency.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_agency_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"agency": agency},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#agency_hint').html("<i class='fa fa-times-circle-o'></i>Agency Name Exists");
+                            $("#agency")[0].setCustomValidity('Agency Name Exists');
+                        }
+                        else{
+                            $('#agency_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#agency")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+
+        //Check uniqueness of the agency code
+        $('#agency_code').keyup(function(){
+            var agency=$(this).val();
+            var check_agency_url="<?php echo base_url('development_partners/check_agency_code_uniqueness/') ?>";
+            if(agency.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_agency_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"agency_code": agency},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#code_hint').html("<i class='fa fa-times-circle-o'></i>Code Exists");
+                            $("#agency_code")[0].setCustomValidity('Code Exists');
+                        }
+                        else{
+                            $('#code_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#agency_code")[0].setCustomValidity('');
                         }
                     },
                     error: function (jqXhr, textStatus, errorThrown) {

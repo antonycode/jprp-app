@@ -240,18 +240,18 @@
                 <input type="hidden" name="agency_uid" id=""  value="<?php echo $agency->uid; ?>" >
 
                 <label for="name">Name:</label>
-                <input type="text" name="name" id=""  value="<?php echo $agency->name; ?>" placeholder="USG"   required pattern="[A-Za-z\s]{5,150}"  />
-                <span class="form_hint">Agency Name Must Be Of Atleast 5 Characters</span>
+                <input id="agency" type="text" name="name" id=""  value="<?php echo $agency->name; ?>" placeholder="USG"   required pattern="[A-Za-z\s0-9]{2,150}"  />
+                <span id="agency_hint" class="form_hint">Agency Name Must Be Of Atleast 2 Characters</span>
             </li>
             <li>
                 <label for="name">Short Name:</label>
-                <input type="text" name="sname" id=""  value="<?php echo $agency->shortname; ?>"  placeholder="USG"  required pattern="[A-Za-z\s]{2,20}"  />
+                <input type="text" name="sname" id=""  value="<?php echo $agency->shortname; ?>"  placeholder="USG"  required pattern="[A-Za-z\s0-9]{2,20}"  />
                 <span class="form_hint">Agency Short Name Must Be Of Atleast 2 Characters</span>
             </li>
             <li>
                 <label for="name">Code:</label>
-                <input type="text" name="code" id=""  value="<?php echo $agency->code; ?>"  placeholder="124"   pattern="[1-9][0-9]{0,10}"  />
-                <span class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
+                <input id="agency_code" type="text" name="code" id=""  value="<?php echo $agency->code; ?>"  placeholder="124"   pattern="[0-9]{0,10}"  />
+                <span id="code_hint" class="form_hint" style='content: "\25C0";background-color:#28921f;'>Code Should Be Of Atleast 1 Integer Character Long</span>
             </li>
             <li>
                 <div>
@@ -366,6 +366,70 @@
         this.dxSDate = sdate;
         this.dxEDate = edate;
     }
+
+    $(document).ready(function(){
+        //Check uniqueness of the agency name
+        $('#agency').keyup(function(){
+            var agency=$(this).val();
+            var check_agency_url="<?php echo base_url('development_partners/check_agency_uniqueness/') ?>";
+            if(agency.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_agency_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"agency": agency},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#agency_hint').html("<i class='fa fa-times-circle-o'></i>Agency Name Exists");
+                            $("#agency")[0].setCustomValidity('Agency Name Exists');
+                        }
+                        else{
+                            $('#agency_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#agency")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+
+        //Check uniqueness of the agency code
+        $('#agency_code').keyup(function(){
+            var agency=$(this).val();
+            var check_agency_url="<?php echo base_url('development_partners/check_agency_code_uniqueness/') ?>";
+            if(agency.length>2){
+                //alert(username);
+                $.ajax({
+                    url: check_agency_url,
+                    dataType: 'text',
+                    type: 'post',
+                    data: {"agency_code": agency},
+                    contentType: 'application/x-www-form-urlencoded',
+                    success: function (data, textStatus, jQxhr) {
+                        if(data=="True"){
+                            $('#code_hint').html("<i class='fa fa-times-circle-o'></i>Code Exists");
+                            $("#agency_code")[0].setCustomValidity('Code Exists');
+                        }
+                        else{
+                            $('#code_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
+                            $("#agency_code")[0].setCustomValidity('');
+                        }
+                    },
+                    error: function (jqXhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                    }
+                });
+
+            }
+        });
+
+    });
 
 
 </script>
