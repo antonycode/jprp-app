@@ -372,7 +372,7 @@ class Development_partners_model extends CI_Model
             }
 
         } else {
-            return "Development Partner Exists In Database. Kindly Try Again With A Different Name";
+            return "Agency Exists In Database. Kindly Try Again With A Different Name";
         }
 
 

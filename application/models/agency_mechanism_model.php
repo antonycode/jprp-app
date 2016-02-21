@@ -93,6 +93,7 @@
                     "code" => $mechanism_uid,
                     "name" => $mechanism_name,
                     'publicaccess'=>"--------",
+                    'userid'=>$this->session->userdata('userid'),
                     "shortname" => substr($mechanism_name, 0, 30),
                     'lastupdated' => date("Y-m-d")
                 );
@@ -236,7 +237,13 @@
                     $categoryid=$category_item->row()->categoryid;
                 }
                 $maxorder= $this->db->query("SELECT MAX(sort_order) as max FROM categories_categoryoptions WHERE categoryid=$categoryid ")->row()->max;
-                $this->db->insert('categories_categoryoptions',array('categoryoptionid'=>$categoryoption_id,'categoryid'=>$categoryid,'sort_order'=>$maxorder+1));
+
+                $categories_categoryoptions=array(
+                    'categoryoptionid'=>$categoryoption_id,
+                    'categoryid'=>$categoryid,
+                    'sort_order'=>$maxorder+1
+                );
+                $this->db->insert('categories_categoryoptions',$categories_categoryoptions);
 
                 //Step 4 create CategoryOptionCombo : Attribution Key(new generated categoryoptioncomboid)
                 $optioncombo_shuffle=substr(str_shuffle(time().""."0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"), 0, $length);
