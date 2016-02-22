@@ -78,7 +78,16 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
 		} else {
 			return "";
 		}        
-    }	
+    }
+
+    public function get_all_authorities(){
+        $authorities = $this->db->get('attributionauthorities');
+        if (sizeof($authorities->result())>0) {
+            return $authorities->result();
+        } else {
+            return "";
+        }
+    }
     public function get_dhisroles($level){
         $roles = $this->db->get_where('userrole',array('hierarchy_level_id'=>$level));
 		if (sizeof($roles->result())>0) {

@@ -28,9 +28,9 @@
         <div class="container">
             <div class="row">
 
-                <div class="col-md-6 item-user" style="margin-left: -10%;margin-top: 5%;">
+                <div class="col-sm-6 col-md-6 col-lg-6 item-user" >
 
-                    <a href="<?php echo base_url('user_management/user_roles') ?>">
+                    <a href="<?php echo base_url('user_manager/userrole_list') ?>">
                         <div class="col-md-2">
                             <i class="fa fa-wrench fa-5x"></i>
                         </div>
@@ -49,7 +49,7 @@
 
                 </div>
 
-                <div class="col-md-6  item-user" style="margin-left: 10%;margin-top: 5%;">
+                <div class="col-sm-6 col-md-6 col-lg-6 item-user" >
                     <a href="<?php echo base_url('user_manager/user_list') ?>">
                         <div class="col-md-2">
                             <i class="fa fa-user fa-5x"></i>
@@ -76,7 +76,7 @@
              	echo '
             	
             <div class="row">
-                <div class="col-md-6 item-user" style="margin-left: -10%; margin-top: 5%;">
+                <div class="col-sm-6 col-md-6 col-lg-6 item-user" >
                     <a href="';
                     echo base_url('user_manager/associates_list');
                         echo '"><div class="col-md-2">

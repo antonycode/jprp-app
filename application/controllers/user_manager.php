@@ -343,5 +343,63 @@ class User_manager extends CI_Controller {
 			}       
         }	
 	}
+
+	public function userrole_list($message=null){
+		if($this->session->userdata('marker')!=1){
+			redirect($this->index());
+		}else{
+			//Check If User Has Authority(program_management) To Create Programs
+			if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
+				$data['userroles']="";
+				$data['page']="user_management/userrole_list";
+				$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+				$data['error_message']=str_replace("%20", " ", "");
+				$data['agencyname']=$this->session->userdata('groupname');
+				$this->load->view('template',$data);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+				$this->load->view('error',$data);
+			}
+		}
+	}
+
+	public function add_userrole($message=null){
+		if($this->session->userdata('marker')!=1){
+			redirect($this->index());
+		}else{
+			//Check If User Has Authority(program_management) To Create Programs
+			if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
+				$data['authorities']=$this->usermanagement_model->get_all_authorities();
+				$data['page']="user_management/userrole_create";
+				$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+				$data['error_message']=str_replace("%20", " ", "");
+				$data['agencyname']=$this->session->userdata('groupname');
+				$this->load->view('template',$data);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+				$this->load->view('error',$data);
+			}
+		}
+	}
+
+	public function save_userrole(){
+		if ($this->session->userdata('marker') != 1) {
+			redirect($this->index());
+		} else {
+			//Check If User Has Authority(program_magement) To  userrole
+			if ($this->user_model->get_user_role('global_associate_management', $this->session->userdata('userroleid'))) {
+				if ($progress = $this->moh_model->save_userrole() ===TRUE) {
+					$message = "User Role Has Successfully been Updated";
+					$this->userrole_list($message);
+				} else {
+					$message =  $progress;
+					$this->userrole_list($message);
+				}
+			} else {
+				$data['message'] = "Kindly Contact The Administrator You Have No Access Rights To This Module";
+				$this->load->view('error', $data);
+			}
+		}
+	}
 		
 }
