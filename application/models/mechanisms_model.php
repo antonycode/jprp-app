@@ -302,7 +302,8 @@ class Mechanisms_model extends CI_Model {
 	 }
 	 public function addnewmechanism(){
 
- 		$datim_id= $this->input->post('code');
+	 	$kepms_id= $this->input->post('kepms_id');
+ 		$datim_id= $this->input->post('datim_id');
  		$mechanisms_name = $this->input->post('mechanism_name');
  		$partner_name = $this->input->post('partner_name');
  		$end_date = $this->input->post('end_date');
@@ -312,10 +313,10 @@ class Mechanisms_model extends CI_Model {
 		$control=sizeof($this->db->get_where("attribution_keys",array("datim_id"=>$datim_id))->result());
 		if ($control==1) {
 
-			return "Code Exists";
+			return "Datim ID Exists";
 
 		}elseif($control==0) {//Generate Attribution Key If Key Doesn't Exist 
-			//Step1 create User Group
+			//Step1 Generate User Group
 			$length=11;//Length Of UID String Generator
 						
 			$this->db->select_max('usergroupid');

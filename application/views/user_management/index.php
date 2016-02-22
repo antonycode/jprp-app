@@ -70,10 +70,16 @@
                 </div>
             </div>
             <br/>
+
+            <?php
+            if ($associatesmanagement) {
+             	echo '
+            	
             <div class="row">
                 <div class="col-md-6 item-user" style="margin-left: -10%; margin-top: 5%;">
-                    <a href="<?php echo base_url('user_manager/associates_list') ?>">
-                        <div class="col-md-2">
+                    <a href="';
+                    echo base_url('user_manager/associates_list');
+                        echo '"><div class="col-md-2">
                             <i class="fa fa-users fa-5x"></i>
                         </div>
 
@@ -90,8 +96,13 @@
                         </div>
                     </a>
                 </div>
+            </div>            	
+            	
+            	
+            	';               
+            }
+            ?>
 
-            </div>
         </div>
         <!-- /.box-body -->
     </div>

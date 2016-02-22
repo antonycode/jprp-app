@@ -18,11 +18,12 @@ class User_manager extends CI_Controller {
             redirect($this->index());
         }else{
         	//Check If User Has Authority(user_management) To Create Programs
-        	if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
+        	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))||$this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid')) ) {
 					$data['users']=$this->usermanagement_model->get_global_users();
 					$data['page']="user_management/index";
 	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
                  	$data['agencyname']=$this->session->userdata('groupname');	
+					$data['associatesmanagement']=$this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'));
 					$this->load->view('template',$data);   		       		
 			}else{
 				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
@@ -35,17 +36,22 @@ class User_manager extends CI_Controller {
             redirect($this->index());
         }else{
         	//Check If User Has Authority(user_management) To Create Programs
-        	if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
+        	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
 					$data['users']=$this->usermanagement_model->get_global_users();
 					$data['page']="user_management/user_list";
-					$data['error_message']=str_replace("%20", " ", "");
+					$data['error_message']=str_replace("%20", " ", $errors);
+					$data['right']=TRUE;
 	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
                  	$data['agencyname']=$this->session->userdata('groupname');						
 					$this->load->view('template',$data);     		       		
 			} else if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
-					$data['users']=$this->usermanagement_model->get_org_users($this->session->userdata("group_id"));
-					$data['page']="user_management";
-					$this->load->view('template',$data); 
+					$data['users']=$this->usermanagement_model->get_org_users($this->session->userdata("groupid"));
+					$data['page']="user_management/user_list";
+					$data['error_message']=str_replace("%20", " ", $errors);
+					$data['right']=FALSE;
+	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+                 	$data['agencyname']=$this->session->userdata('groupname');						
+					$this->load->view('template',$data);
 			}else{
 				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
                 $this->load->view('error',$data);					
@@ -57,22 +63,127 @@ class User_manager extends CI_Controller {
             redirect($this->index());
         }else{
         	//Check If User Has Authority(user_management) To Create Programs
-        	if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
-					$data['users']=$this->usermanagement_model->get_global_users();
-					$data['page']="user_management/org_user_create";
+        	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
+					//Get User hierarchy Level
+					$level=$this->usermanagement_model->get_group_level($this->session->userdata('groupname'));
+					if ($level==4) {
+						$data['page']="user_management/im_user_create";
+						$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
+						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+						$data['usercreatefunction']="org_im_user_create";
+						$data['associate']=FALSE;
+					} else{
+						$data['page']="user_management/donoragency_user_create";
+						$data['organization']=$this->usermanagement_model->get_donoragency_groups();
+						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+						$data['usercreatefunction']="org_donoragency_user_create";
+						$data['associate']=FALSE;
+					} 
 					$data['error_message']=str_replace("%20", " ", "");
 	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
                  	$data['agencyname']=$this->session->userdata('groupname');						
-					$this->load->view('template',$data);     		       		
-			} else if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
-					$data['users']=$this->usermanagement_model->get_org_users($this->session->userdata("group_id"));
-					$data['page']="user_management";
-					$this->load->view('template',$data); 
+					$this->load->view('template',$data);     
 			}else{
 				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
                 $this->load->view('error',$data);					
 			}       
         }			
+	}
+
+	public function org_im_user_create(){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
+        		$message=$this->usermanagement_model->org_new_im_user();
+        		$this->user_list($message);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }		
+	}
+
+	public function org_donoragency_user_create(){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
+        		$message=$this->usermanagement_model->org_new_donoragancy_user();
+    			$this->user_list($message);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }			
+	}
+	public function global_create_donoragency_user(){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+					$data['page']="user_management/donoragency_user_create";
+					$data['organization']=$this->usermanagement_model->get_donoragency_groups();
+					$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+					$data['associate']=$this->usermanagement_model->get_donoragency_groups();
+					$data['usercreatefunction']="global_donoragency_user_create";
+					$data['error_message']=str_replace("%20", " ", "");
+					$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+					$data['agencyname']=$this->session->userdata('groupname');						
+					$this->load->view('template',$data); 						
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }		
+	}
+	public function global_create_im_user(){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+					$data['page']="user_management/im_user_create";
+					$data['organization']=$this->usermanagement_model->get_donoragency_groups();
+					$level=4;
+					$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
+					$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+					$data['associate']=$this->usermanagement_model->get_im_groups();
+					$data['usercreatefunction']="global_im_user_create";
+					$data['error_message']=str_replace("%20", " ", "");
+					$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+					$data['agencyname']=$this->session->userdata('groupname');						
+					$this->load->view('template',$data); 						
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }		
+	}
+	public function global_donoragency_user_create(){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+        		$message=$this->usermanagement_model->global_new_donoragancy_user();
+    			$this->user_list($message); 						
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }		
+	}
+	public function global_im_user_create(){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+        		$message=$this->usermanagement_model->global_new_im_user();
+    			$this->user_list($message); 						
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }		
 	}
 	public function associates_list($message=null){
         if($this->session->userdata('marker')!=1){
@@ -161,8 +272,7 @@ class User_manager extends CI_Controller {
         }			
 	}
 
-	public function save_devp_update()
-	{
+	public function save_devp_update(){
 		if ($this->session->userdata('marker') != 1) {
 			redirect($this->index());
 		} else {
@@ -180,5 +290,58 @@ class User_manager extends CI_Controller {
 				$this->load->view('error', $data);
 			}
 		}
-	}	
+	}
+	
+	public function userview($userid){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	//Check If User Has Authority(user_management) To Create Programs
+        	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))||$this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+					//Get User hierarchy Level
+					$level=$this->usermanagement_model->get_user_level($userid);
+					if ($level=="") {
+						$data['message']="User Has Not Been Allocated A User Group";
+		                $this->load->view('error',$data);						
+					} elseif ($level==4) {
+						$data['page']="user_management/im_user_update";
+						$data['user']=$this->usermanagement_model->get_user_info($userid);
+						$data['userid']=$userid;
+						$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
+						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+						$data['associate']=FALSE;
+					} else{
+						$data['page']="user_management/donoragency_user_update";
+						$data['user']=$this->usermanagement_model->get_user_info($userid);
+						$data['userid']=$userid;
+						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+						$data['associate']=FALSE;
+					} 
+					$data['error_message']=str_replace("%20", " ", "");
+	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+                 	$data['agencyname']=$this->session->userdata('groupname');						
+					$this->load->view('template',$data);     
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }		
+	}
+
+	public function im_update($userid){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	//Check If User Has Authority(user_management) To Create Programs
+        	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))||$this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+					//Get User hierarchy Level
+        		$message=$this->usermanagement_model->im_update();
+        		$this->user_list($message);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }	
+	}
+		
 }

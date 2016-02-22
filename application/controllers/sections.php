@@ -210,7 +210,7 @@ class Sections extends CI_Controller {
     
     public function k2d(){
         $this->session->sess_destroy();
-        redirect('http://localhost:8080');
+        redirect('http://localhost:8080/');
     }
     
 }

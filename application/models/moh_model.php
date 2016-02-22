@@ -437,7 +437,9 @@ class Moh_model extends CI_Model
         $categoryoptiongroup = array(
             "name" => $name,
             "shortname" => substr($shortname, 0, 30),
-            'lastupdated' => date("Y-m-d")
+            'lastupdated' => date("Y-m-d"),
+            "userid" => $this->session->userdata("userid"),
+            "code"=>$code
         );
 
         $this->db->where('uid', $devp_uid);

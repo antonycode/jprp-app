@@ -107,7 +107,7 @@
 		                        <li class='active'>
 		                            <a href=' ".base_url()."moh_manager'>
 		                                <i class='fa fa-dashboard'></i>
-		                                <span>DevPartner Manager</span>
+		                                <span>Donor Manager</span>
 		                            </a>
 		                        </li>                                   
                                  
@@ -157,7 +157,7 @@
 		                        <li class='active'>
 		                            <a href=' ".base_url()."agency_mechanism'>
 		                                <i class='fa fa-dashboard'></i>
-		                                <span>Mechanism Manager</span>
+		                                <span>Mechanisms Manager</span>
 		                            </a>
 		                        </li>                                   
                                  
@@ -245,7 +245,27 @@
                                  ";                             	
                              }
                          }
-                         ?>     
+                         ?>   
+                         
+                           
+                         <?php
+                         if ($menu!="") {
+                         	$temp = json_decode(json_encode($menu),true);
+                             if (array_search('org_user_management', array_column($temp , 'attributionauthoritiesname'))!==FALSE || array_search('global_user_management', array_column($temp , 'attributionauthoritiesname'))!==FALSE) {
+                                 echo "
+		                        <li class='active'>
+		                            <a href=' ".base_url()."user_manager/'>
+		                                <i class='fa fa-user'></i>
+		                                <span>Users</span>
+		                            </a>
+		                        </li>                                   
+                                 
+                                 ";  
+                             }else{
+                           	
+                             }
+                         }
+                         ?>                           
                          <!--                   
                         <li class="active">
                             <a href="<?php echo base_url(); ?>data_attribution">
@@ -253,7 +273,6 @@
                                 <span>Data Attribution</span>
                             </a>
                         </li>       -->  
-
 
                         <li class="active">
                             <a href="<?php echo base_url(); ?>message">

@@ -391,7 +391,7 @@
                                     </div>
                                 </div>
                             </section>
-                        <div style="margin-left: 50%; width: 100%">
+                        <div class="col-md-offset-4">
                             <button class="submit">Submit</button>
                         </div>
                         </div>

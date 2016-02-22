@@ -206,8 +206,13 @@
                 <?php
                 echo '<h1 id="message" style="float: left; margin-left: 15%; margin-top: 0.2%; font-size: 18px; color: green">' . $error_message . '</h1>';
                 ?>
-                <!--                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#usergroupModal" data-whatever="@mdo" style="float: right; margin-right: 10%; margin-top: 0.2%; font-size: 14px; color: white">New Group</button>-->
-
+                <?php if ($right) {
+                    echo '<a href="' . base_url('User_manager/global_create_donoragency_user') . '" class="btn btn-primary btn-sm" style="background-color: green; float: left; margin-left: 30%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New Donor/Agency User</a>';
+                	echo '<a href="' . base_url('User_manager/global_create_im_user') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 15%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New Implementing Mechanism User</a>';
+				}else{
+               	echo '<a href="' . base_url('User_manager/create_user') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 10%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New User</a>';					
+				} 
+				?>
             </div>
 
             <!-- /.box-header -->
@@ -215,11 +220,9 @@
                 <table id="users-table" class="table table-bordered table-striped">
                     <thead>
                     <tr>
-                        <!--                        <th style="width:5%">Usergroup ID</th>-->
-                        <th style="width:25%">Name</th>
-                        <!--                        <th style="width:5%">User Group</th>-->
-                        <th style="width:5%">Organization</th>
-                        <th style="width:5%">User Role</th>
+                        <th >Name</th>
+                        <th >Organization</th>
+                        <th >User Role</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -228,8 +231,8 @@
                         foreach ($users as $row) {
                             echo "<tr class='grade_tr' data-id='" . $row->userid . "' data-name='" . $row->surname . "'>";
                             echo "<td>$row->surname  $row->firstname</td>";
-							echo "<td>$row->surname  $row->firstname</td>";
- 							echo "<td>$row->surname  $row->firstname</td>";
+							echo "<td>$row->orgname</td>";
+ 							echo "<td>$row->rolename</td>";
                             echo "</tr>";
                         }
                     }
@@ -287,7 +290,7 @@
     <ul class="" style="list-style-type:none">
         <?php
         echo '<li class=""><a href="#" id="viewuser"><i class="fa fa-plus"></i> View</a></li> <br>';
-        echo '<li class=""><a href="#updateuserModal" id="updateuser"><i class="fa fa-edit"></i> Update</a></li> <br>';
+        echo '<li class=""><a href="#updateuserModal" id="updateuser"><i class="fa fa-edit"></i>Role Update</a></li> <br>';
         echo '<li class=""><a href="#" id="deleteuser" onclick=""><i class="fa fa-trash-o"></i> Delete</a></li> <br>';
         ?>
     </ul>
@@ -351,7 +354,7 @@
                 return false;
             });
 
-            document.getElementById("viewuser").href = "<?php echo base_url();?>" + "usermanagement/" + id;
+            document.getElementById("viewuser").href = "<?php echo base_url();?>" + "user_manager/userview/" + id;
             // document.getElementById("updaterole").href = "<?php echo base_url();?>" + "programmanager/editprogram/" + id;
             document.getElementById("deleteruser").setAttribute('onclick', "userdelete('" + id + "','" + name + "')");
         });
