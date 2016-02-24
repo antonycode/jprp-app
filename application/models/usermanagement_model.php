@@ -554,5 +554,229 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
 		return "";	
 	}
 
+
+
+//Attribution Role -Fetch Authorities
+
+    public function get_associate_authorities(){
+
+        $usergroupid=$this->session->userdata('groupid');
+        $attributionroleid="";
+        $query = $this->db->get_where('usergroup', array('usergroupid'=>$usergroupid));
+        if (sizeof($query->result())>0) {
+            $attributionroleid=$query->row()->attributionroleid;
+        }
+
+        if($attributionroleid!=""){
+
+            $query="select * from attributionauthorities where attributionauthoritiesid in
+              (select distinct atributionauthoritesid
+              from attribution_roles_members where attributionroleid='$attributionroleid')";
+            $info=$this->db->query($query);
+            if(sizeof($info->result())>0){
+
+                return $info->result();
+            }
+            else{
+
+                return "";
+            }
+
+        }
+        else{
+            return "";
+        }
+    }
+
+    public function save_attribution_role(){
+
+        $role_name=$this->input->post('role_name');
+        $authorities=$this->input->post('authorities');
+
+        $usergroupid=$this->session->userdata('groupid');
+
+        $info=$this->db->get_where('attribution_roles', array('rolename'=>$role_name, 'usergroupid'=>$usergroupid));
+
+        if(sizeof($info->result())==0){
+
+            $roleid=0;
+            $this->db->select_max('attributionroleid');
+            $role = $this->db->get('attribution_roles');
+            $roleid = 1 + (integer)$role->row()->attributionroleid;
+
+            $attribution_role=array(
+                'rolename'=>$role_name,
+                'attributionroleid'=>$roleid,
+                'usergroupid'=>$usergroupid
+            );
+
+            if($this->db->insert('attribution_roles', $attribution_role)){
+
+                if($authorities!=null){
+
+                    //Step4
+                    foreach ($authorities as $id) {
+
+                        $role_authorities = array(
+                            "attributionroleid" => $roleid,
+                            "atributionauthoritesid" => $id,
+                        );
+
+                        if ($this->db->insert("attribution_roles_members", $role_authorities)) {
+
+                        } else {
+                            return "An Error Occurred During The user role";
+                        }
+
+                    }
+
+                }
+
+            }
+            else{
+                return "Error Adding Authorities";
+            }
+        }
+        else{
+            return "User Role Name Exists";
+        }
+
+        return 1;
+
+    }
+
+    public function get_level_roles(){
+
+        $usergroupid=$this->session->userdata('groupid');
+        $info=$this->db->get_where('attribution_roles', array('usergroupid'=>$usergroupid));
+        if (sizeof($info->result())>0) {
+            return $info->result();
+        } else {
+            return "";
+        }
+    }
+
+    public function get_role($roleid){
+
+        $usergroupid=$this->session->userdata('groupid');
+        $info=$this->db->get_where('attribution_roles', array('attributionroleid'=>$roleid));
+        if (sizeof($info->result())>0) {
+            return $info->row();
+        } else {
+            return "";
+        }
+    }
+
+    public function get_selected_authorities($roleid){
+
+        $query="select * from attributionauthorities where attributionauthoritiesid in
+              (select distinct atributionauthoritesid
+              from attribution_roles_members where attributionroleid='$roleid')";
+        $info=$this->db->query($query);
+        if(sizeof($info->result())>0){
+
+            return $info->result();
+        }
+        else{
+
+            return "";
+        }
+    }
+
+    public function get_unselected_authorities($roleid){
+
+        $usergroupid=$this->session->userdata('groupid');
+        $attributionroleid="";
+        $query = $this->db->get_where('usergroup', array('usergroupid'=>$usergroupid));
+        if (sizeof($query->result())>0) {
+            $attributionroleid=$query->row()->attributionroleid;
+        }
+
+        if($attributionroleid!=""){
+
+            $query="select * from attributionauthorities where attributionauthoritiesid in
+              (select distinct atributionauthoritesid
+              from attribution_roles_members where attributionroleid='$attributionroleid')
+              and attributionauthoritiesid NOT IN (
+              select attributionauthoritiesid from attributionauthorities where attributionauthoritiesid in
+              (select distinct atributionauthoritesid
+              from attribution_roles_members where attributionroleid='$roleid')
+              )";
+            $info=$this->db->query($query);
+            if(sizeof($info->result())>0){
+
+                return $info->result();
+            }
+            else{
+
+                return "";
+            }
+
+        }
+        else{
+            return "";
+        }
+    }
+
+
+
+    public function update_attribution_role(){
+
+        $role_name=$this->input->post('role_name');
+        $roleid=$this->input->post('roleid');
+        $authorities=$this->input->post('authorities');
+
+        $usergroupid=$this->session->userdata('groupid');
+
+
+        if($role_name!=""){
+
+
+            $attribution_role=array(
+                'rolename'=>$role_name,
+                'usergroupid'=>$usergroupid
+            );
+
+            $this->db->where('attributionroleid', $roleid);
+
+            if($this->db->update('attribution_roles', $attribution_role)){
+
+                if($authorities!=null){
+
+                    if(!$this->db->delete("attribution_roles_members", array( "attributionroleid" => $roleid))){
+                        return "Error updating the Role";
+                    }
+
+                    foreach ($authorities as $id) {
+
+                        $role_authorities = array(
+                            "attributionroleid" => $roleid,
+                            "atributionauthoritesid" => $id,
+                        );
+
+                        if ($this->db->insert("attribution_roles_members", $role_authorities)) {
+
+                        } else {
+                            return "An Error Occurred During The user role";
+                        }
+
+                    }
+
+                }
+
+            }
+            else{
+                return "Error Adding Authorities";
+            }
+        }
+        else{
+            return "User Role Name Exists";
+        }
+
+        return 1;
+
+    }
+
+
 }
 

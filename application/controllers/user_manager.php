@@ -349,11 +349,11 @@ class User_manager extends CI_Controller {
 			redirect($this->index());
 		}else{
 			//Check If User Has Authority(program_management) To Create Programs
-			if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
-				$data['userroles']="";
+			if ($this->user_model->get_user_role('org_role_management',$this->session->userdata('userroleid'))) {
+				$data['userroles']=$this->usermanagement_model->get_level_roles();
 				$data['page']="user_management/userrole_list";
 				$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
-				$data['error_message']=str_replace("%20", " ", "");
+				$data['error_message']=$message;
 				$data['agencyname']=$this->session->userdata('groupname');
 				$this->load->view('template',$data);
 			}else{
@@ -368,8 +368,8 @@ class User_manager extends CI_Controller {
 			redirect($this->index());
 		}else{
 			//Check If User Has Authority(program_management) To Create Programs
-			if ($this->user_model->get_user_role('global_associate_management',$this->session->userdata('userroleid'))) {
-				$data['authorities']=$this->usermanagement_model->get_all_authorities();
+			if ($this->user_model->get_user_role('org_role_management',$this->session->userdata('userroleid'))) {
+				$data['authorities']=$this->usermanagement_model->get_associate_authorities();
 				$data['page']="user_management/userrole_create";
 				$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
 				$data['error_message']=str_replace("%20", " ", "");
@@ -386,10 +386,11 @@ class User_manager extends CI_Controller {
 		if ($this->session->userdata('marker') != 1) {
 			redirect($this->index());
 		} else {
-			//Check If User Has Authority(program_magement) To  userrole
-			if ($this->user_model->get_user_role('global_associate_management', $this->session->userdata('userroleid'))) {
-				if ($progress = $this->moh_model->save_userrole() ===TRUE) {
-					$message = "User Role Has Successfully been Updated";
+			//Check If User
+			if ($this->user_model->get_user_role('org_role_management', $this->session->userdata('userroleid'))) {
+				$progress=$this->usermanagement_model->save_attribution_role();
+				if ($progress ===1) {
+					$message = "User Role Has Successfully been Created";
 					$this->userrole_list($message);
 				} else {
 					$message =  $progress;
@@ -398,6 +399,71 @@ class User_manager extends CI_Controller {
 			} else {
 				$data['message'] = "Kindly Contact The Administrator You Have No Access Rights To This Module";
 				$this->load->view('error', $data);
+			}
+		}
+	}
+
+
+
+	public function update_userrole(){
+		if ($this->session->userdata('marker') != 1) {
+			redirect($this->index());
+		} else {
+			//Check If User
+			if ($this->user_model->get_user_role('org_role_management', $this->session->userdata('userroleid'))) {
+				$progress = $this->usermanagement_model->update_attribution_role();
+				if ($progress===1) {
+					$message = "User Role Has Successfully been Updated";
+					$this->userrole_list($message);
+				} else {
+					$message =  "Error Updating";
+					$this->userrole_list($message);
+				}
+			} else {
+				$data['message'] = "Kindly Contact The Administrator You Have No Access Rights To This Module";
+				$this->load->view('error', $data);
+			}
+		}
+	}
+
+	public function edit_userrole($roleid){
+		if($this->session->userdata('marker')!=1){
+			redirect($this->index());
+		}else{
+			//Check If User Has Authority(program_management) To Create Programs
+			if ($this->user_model->get_user_role('org_role_management',$this->session->userdata('userroleid'))) {
+				$data['selected_authorities']=$this->usermanagement_model->get_selected_authorities($roleid);
+				$data['authorities']=$this->usermanagement_model->get_unselected_authorities($roleid);
+				$data['role']=$this->usermanagement_model->get_role($roleid);
+				$data['page']="user_management/userrole_edit";
+				$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+				$data['error_message']="";
+				$data['agencyname']=$this->session->userdata('groupname');
+				$this->load->view('template',$data);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+				$this->load->view('error',$data);
+			}
+		}
+	}
+
+
+	public function view_userrole($roleid){
+		if($this->session->userdata('marker')!=1){
+			redirect($this->index());
+		}else{
+			//Check If User Has Authority(program_management) To Create Programs
+			if ($this->user_model->get_user_role('org_role_management',$this->session->userdata('userroleid'))) {
+				$data['authorities']=$this->usermanagement_model->get_selected_authorities($roleid);
+				$data['role']=$this->usermanagement_model->get_role($roleid);
+				$data['page']="user_management/userrole_view";
+				$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+				$data['error_message']="";
+				$data['agencyname']=$this->session->userdata('groupname');
+				$this->load->view('template',$data);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+				$this->load->view('error',$data);
 			}
 		}
 	}

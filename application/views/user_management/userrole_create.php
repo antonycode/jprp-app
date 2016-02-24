@@ -281,7 +281,7 @@
                     </li>
                     <li>
                         <label for="name">Name:</label>
-                        <input type="text" name="name" id="userrole" placeholder="User role" required pattern="[A-Za-z\s0-9]{2,150}"/>
+                        <input type="text" name="role_name" id="userrole" placeholder="User role" required pattern="[A-Za-z\s0-9]{2,150}"/>
                         <span  class="form_hint">User Role Name Must Be Of Atleast 2 Characters</span>
                     </li>
 

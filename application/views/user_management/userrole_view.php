@@ -2,6 +2,14 @@
 <!--/**-->
 <!-- * Created by PhpStorm.-->
 <!-- * User: banga-->
+<!-- * Date: 24/02/16-->
+<!-- * Time: 07:16-->
+<!-- */-->
+
+<!---->
+<!--/**-->
+<!-- * Created by PhpStorm.-->
+<!-- * User: banga-->
 <!-- * Date: 23/02/16-->
 <!-- * Time: 00:18-->
 <!-- */-->
@@ -28,7 +36,7 @@
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="#">Userroles</a></li>
-        <li class="active">Userrole List</li>
+        <li class="active">Userrole View</li>
     </ol>
 </section>
 
@@ -37,33 +45,39 @@
     <div class="row">
         <div class="box">
             <div class="box-header">
-                <h3 class="box-title">User Roles</h3>
+                <h3 class="box-title">User Role: <?php
+                    if ($role != ''){
+                        echo $role->rolename;
+                    }
+                     ?>
+                </h3>
                 <?php if (true) {
                     echo '<h1 id="message" style="float: left; margin-left: 15%; margin-top: 0.2%; font-size: 18px; color: green">' . $error_message . '</h1>';
                 } ?>
                 <?php if (true) {
-                    echo '<a href="' . base_url('user_manager/add_userrole') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 10%; margin-top: 0.2%; font-size: 14px; color: white">Add User Role</a>';
+                    echo '<a href="' . base_url('user_manager/userrole_list') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 10%; margin-top: 0.2%; font-size: 14px; color: white">
+                    <i class="fa fa-arrow-left"></i> Back</a>';
                 } ?>
 
             </div>
             <!-- /.box-header -->
             <div class="box-body table-responsive">
-                <table id="userrole_table" class="table table-bordered table-striped">
+                <table id="authority_table" class="table table-bordered table-striped">
                     <thead>
                     <tr>
                         <th style="width:10%">#</th>
-                        <th style="width:20%">Name</th>
+                        <th style="width:20%">Authority Name</th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    if ($userroles != '') {
+                    if ($authorities != '') {
                         $i = 1;
-                        foreach ($userroles as $row) {
+                        foreach ($authorities as $row) {
 
-                            echo "<tr class='grade_tr' data-id=$row->attributionroleid>";
+                            echo "<tr>";
                             echo "<td>$i</td>";
-                            echo "<td>$row->rolename</td>";
+                            echo "<td>$row->attributionauthoritiesname</td>";
                             echo "</tr>";
                             $i++;
                         }
@@ -163,9 +177,9 @@
         if (true) {
             echo '<li class=""><a href="#" id="edit"><i class="fa fa-edit"></i> Update</a></li> <br>';
         };
-//        if (true) {
-//            echo '<li class=""><a href="#" id="remove" onclick=""><i class="fa fa-trash-o"></i> Remove</a></li> <br>';
-//        };
+        //        if (true) {
+        //            echo '<li class=""><a href="#" id="remove" onclick=""><i class="fa fa-trash-o"></i> Remove</a></li> <br>';
+        //        };
         ?>
     </ul>
 </div>
@@ -230,7 +244,7 @@
             var name = $(this).closest('tr').data('name');
 
             // Actions
-            document.getElementById("view").href = "<?php echo base_url();?>" + "user_manager/view_userrole/" + id;
+            document.getElementById("view").href = "#";
             document.getElementById("edit").href = "<?php echo base_url();?>" + "user_manager/edit_userrole/" + id;
             document.getElementById("remove").setAttribute('onclick', "removeAgency('" + id + "','" + name + "')");
             document.getElementById("showdetails").setAttribute('onclick', "showAgencyDetails('" + id + "')");
