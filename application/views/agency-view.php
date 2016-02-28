@@ -452,3 +452,12 @@
     });
 
 </script>
+A PHP Error was encountered
+
+Severity: Notice
+
+Message: Trying to get property of non-object
+
+Filename: controllers/programmanager.php
+
+Line Number: 63
