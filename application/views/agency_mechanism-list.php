@@ -113,10 +113,11 @@
 
             </div>
             <!-- /.box-header -->
-            <div class="box-body table-responsive">
+            <div id="btn-table" class="box-body table-responsive">
                 <table id="agency_table" class="table table-bordered table-striped">
                     <thead>
                     <tr>
+                        <th style="width:5%">#</th>
                         <th style="width:20%">Mechanism Name</th>
                         <th>Partner Name</th>
                         <th style="width:20%">Datim ID</th>
@@ -128,6 +129,7 @@
                         $i = 1;
                         foreach ($mechanisms as $row) {
                             echo "<tr class='grade_tr' data-id='" . $row->uid . "' data-name='" . $row->name . "'>";
+                            echo "<td>$i</td>";
                             echo "<td>$row->name</td>";
                             echo "<td>$row->shortname</td>";
                             echo "<td>$row->code</td>";
@@ -158,9 +160,18 @@
 <script src="<?php echo base_url() ?>style/js/bootstrap.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>/style/bootstrap-dialog/js/jquery-impromptu.js"></script>
 <!-- DATA TABES SCRIPT -->
-<script src="<?php echo base_url() ?>style/js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
-<script src="<?php echo base_url() ?>style/js/plugins/datatables/dataTables.bootstrap.js"
+<!-- DATA TABES SCRIPT -->
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/dataTables.bootstrap.min.js"
         type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/dataTables.buttons.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.bootstrap.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/jszip.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/pdfmake.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/vfs_fonts.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.html5.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.print.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.colVis.min.js" type="text/javascript"></script>
 <!-- AdminLTE App -->
 <script src="<?php echo base_url() ?>style/js/AdminLTE/app.js" type="text/javascript"></script>
 <!-- AdminLTE for demo purposes -->
@@ -170,14 +181,31 @@
 
 <script type="text/javascript">
     $(function () {
-        $('#agency_table').dataTable({
-            "bPaginate": true,
-            "bLengthChange": true,
-            "bFilter": true,
-            "bSort": true,
-            "bInfo": true,
-            "bAutoWidth": true
-        });
+        var tablelist=$('#agency_table').DataTable({
+        "bPaginate": true,
+        "bLengthChange": true,
+        "bFilter": true,
+        "bSort": true,
+        "bInfo": true,
+        "bAutoWidth": true,
+        lengthChange: false,
+        buttons: [ 'excel', 'pdf'],
+        "tableTools": {
+            "aButtons": [
+                {
+                    "sExtends": "excel",
+                    "sButtonText": "Save Excel"
+                },
+                {
+                    "sExtends": "pdf",
+                    "sButtonText": "Download PDF"
+                }
+            ]
+        }
+    });
+ //'colvis','copy'
+    tablelist.buttons().container()
+        .appendTo('#btn-table .col-sm-6:eq(0)');
     });
 </script>
 
