@@ -194,7 +194,11 @@
                 <!-- Content Header (Page header) -->
                 <section class="content-header">
                     <h1>
-                        <?php echo $program_details->program_name; ?>
+                        <?php 
+                        if($program_details!=""){
+                             echo $program_details->program_name; 
+                        }
+                        ?>
                     </h1>
                     <ol class="breadcrumb">
                         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
@@ -207,7 +211,12 @@
 					<div class="row"> 
 						<div class="box">
                                 <div class="box-header">
-                                    <h3 class="box-title"> <?php echo $program_details->program_name; ?> : Programs Dataelements  </h3>
+                                    <h3 class="box-title"> 
+                                    <?php if($program_details!=""){
+                                        echo $program_details->program_name; } 
+                                    ?> : Programs Dataelements  
+                                    
+                                    </h3>
                                 </div><!-- /.box-header -->			
                                 <div class="box-body table-responsive">
                                     <table id="dataelements-table" class="table table-bordered table-striped" >                                    	
@@ -220,7 +229,7 @@
                                     </thead>
                                     <tbody>
                                     	<?php
-                                    	    if ($program_dataelements!=false) {
+                                    	    if ($program_dataelements!="") {
                                                 foreach ($program_dataelements as $row ) {
                                                     echo "<tr>";
                                                     echo "<td>$row->dataelement_code</td>";

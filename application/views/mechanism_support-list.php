@@ -159,35 +159,41 @@
                 <h3 class="box-title"> IPSL</h3>
             </div>
             <!-- /.box-header -->
-            <div class="box-body table-responsive">
-                <table id="mechanisms-table" class="table table-bordered table-striped">
+            <div id="btn-table" class="box-body table-responsive">
+             <table id="mechanisms-table" class="table table-striped table-bordered" cellspacing="0" width="100%">
                     <thead>
                     <tr>
-                        <th style="width:20%">Organization Unit</th>
-                        <th style="width:10%">Program Name</th>
-                        <th style="width:10%">Support Type</th>
-                        <th style="width:10%">Period</th>
+                        <th style="width: 5%">#</th>
+                        <th style="width:30%">Organization Unit</th>
+                        <th style="width:10%">MFL Code</th>
+                        <th style="width:10%">Datim ID</th>
+                        <th style="width:30%">Mechanism Name</th>
+                        <th style="width:15%">Period</th>
                     </tr>
                     </thead>
                     <tbody>
+
                     <?php
                     if ($support != '') {
                         $i = 1;
                         foreach ($support as $row) {
-                            echo "<tr class='grade_tr' data-id='" . $row->id . "' data-name='" . $row->mechanism_name . "' data-org='".$row->organization_name."' data-period='".$row->period."' data-support='".$row->support_type."'>";
-                            echo "<td>$row->organization_name</td>";
-                            echo "<td>$row->program_name</td>";
-                            echo "<td>$row->support_type</td>";
+                            echo "<tr class='grade_tr' data-id='" . $row->mflcode . "' data-name='" . $row->orgunitname . "' data-mech='".$row->mechanism."' data-period='".$row->period."' data-support='"."'>";
+                             echo "<td>$i</td>";
+                            echo "<td>$row->orgunitname</td>";
+                            echo "<td>$row->mflcode</td>";
+                            echo "<td>$row->datimid</td>";
+                            echo "<td>$row->mechanism</td>";
                             echo "<td>$row->period</td>";
                             $i++;
                         }
                     }
 
-
                     ?>
+
                     </tbody>
 
                 </table>
+
             </div>
             <!-- /.box-body -->
         </div>
@@ -200,21 +206,62 @@
 
 
 <!-- jQuery 2.0.2 -->
-<script src="<?php echo base_url() ?>js/jquery.min.js"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/jquery.min.js"></script>
 <!-- Bootstrap -->
 <link rel="stylesheet" href="<?php echo base_url(); ?>/style/bootstrap-dialog/css/base.css" type="text/css">
 <script src="<?php echo base_url() ?>style/js/bootstrap.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="<?php echo base_url(); ?>/style/bootstrap-dialog/js/jquery-impromptu.js"></script>
 <!-- DATA TABES SCRIPT -->
-<script src="<?php echo base_url() ?>style/js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
-<script src="<?php echo base_url() ?>style/js/plugins/datatables/dataTables.bootstrap.js"
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/jquery.dataTables.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/dataTables.bootstrap.min.js"
         type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/dataTables.buttons.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.bootstrap.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/jszip.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/pdfmake.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/vfs_fonts.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.html5.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.print.min.js" type="text/javascript"></script>
+<script src="<?php echo base_url() ?>style/js/plugins/datatables/buttons.colVis.min.js" type="text/javascript"></script>
+
 <!-- AdminLTE App -->
 <script src="<?php echo base_url() ?>style/js/AdminLTE/app.js" type="text/javascript"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="<?php echo base_url() ?>style/js/AdminLTE/demo.js" type="text/javascript"></script>
 <!-- page script -->
 
+<script type="text/javascript">
+
+$(document).ready(function() {
+
+    var table=$('#mechanisms-table').DataTable({
+        "bPaginate": true,
+        "bLengthChange": true,
+        "bFilter": true,
+        "bSort": true,
+        "bInfo": true,
+        "bAutoWidth": true,
+        lengthChange: false,
+        buttons: [ 'excel', 'pdf'],
+        "tableTools": {
+            "aButtons": [
+                {
+                    "sExtends": "excel",
+                    "sButtonText": "Save Excel"
+                },
+                {
+                    "sExtends": "pdf",
+                    "sButtonText": "Download PDF"
+                }
+            ]
+        }
+    });
+ //'colvis','copy'
+    table.buttons().container()
+        .appendTo('#btn-table .col-sm-6:eq(0)');
+});
+
+</script>
 
 <script type="text/javascript">
     $(function () {
@@ -224,7 +271,8 @@
             "bFilter": true,
             "bSort": true,
             "bInfo": true,
-            "bAutoWidth": true
+            "bAutoWidth": true,
+
         });
     });
 </script>

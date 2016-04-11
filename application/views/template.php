@@ -20,6 +20,11 @@
         <link href="<?php echo base_url(); ?>style/css/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
         <!-- bootstrap wysihtml5 - text editor -->
         <link href="<?php echo base_url(); ?>style/css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" />
+        <!--datatables-->
+         <link href="<?php echo base_url(); ?>style/js/plugins/datatables/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="<?php echo base_url(); ?>style/js/plugins/datatables/buttons.bootstrap.min.css" rel="stylesheet" 
+        type="text/css" />
+
         <!-- Theme style -->
         <link href="<?php echo base_url(); ?>style/css/AdminLTE.css" rel="stylesheet" type="text/css" />
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

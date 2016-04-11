@@ -207,10 +207,10 @@
                 echo '<h1 id="message" style="float: left; margin-left: 15%; margin-top: 0.2%; font-size: 18px; color: green">' . $error_message . '</h1>';
                 ?>
                 <?php if ($right) {
-                    echo '<a href="' . base_url('User_manager/global_create_donoragency_user') . '" class="btn btn-primary btn-sm" style="background-color: green; float: left; margin-left: 30%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New Donor/Agency User</a>';
-                	echo '<a href="' . base_url('User_manager/global_create_im_user') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 15%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New Implementing Mechanism User</a>';
+                    echo '<a href="' . base_url('user_manager/global_create_donoragency_user') . '" class="btn btn-primary btn-sm" style="background-color: green; float: left; margin-left: 30%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New Donor/Agency User</a>';
+                	echo '<a href="' . base_url('user_manager/global_create_im_user') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 15%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New Implementing Mechanism User</a>';
 				}else{
-               	echo '<a href="' . base_url('User_manager/create_user') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 10%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New User</a>';					
+               	echo '<a href="' . base_url('user_manager/create_user') . '" class="btn btn-primary btn-sm" style="float: right; margin-right: 10%; margin-top: 0.2%; font-size: 14px; color: white"><i class="glyphicon glyphicon-plus"></i>New User</a>';					
 				} 
 				?>
             </div>
@@ -361,7 +361,7 @@
 
         $("#btn-dismiss, thead, tfoot").click(function () {
 
-            $("#contextMenuIDuser").hide(100);
+            $("#contextMenuIDusers").hide(100);
             $("tr").removeClass("alert alert-success");
 
         })

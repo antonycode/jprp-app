@@ -49,7 +49,7 @@ class Development_partners_model extends CI_Model
         $code = $this->input->post('code');
         $programs = $dataelements = $this->input->post("programs");
         $length = 11;
-
+		$categoryoption_id='';
         $timestamp = time();
         $shuffle = $timestamp . "" . "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
         $agency_uid = substr(hash("md5", str_shuffle($shuffle)), 0, $length);
@@ -229,7 +229,7 @@ class Development_partners_model extends CI_Model
 
                 $this->db->insert("attribution_hierarchy", $hierarchy);
                 //Step6 Insert Programs to attribution_hierarchy_programs
-                foreach ($programs as $row) {
+                foreach ($this->input->post("programs") as $row) {
                     $programinfo = $this->db->get_where("attribution_programs", array("program_id" => $row));
                     $dets = $programinfo->row();
                     $hierarchy_programs = array(
@@ -425,7 +425,6 @@ class Development_partners_model extends CI_Model
         $shortname = $this->input->post('sname');
         $code = $this->input->post('code');
         $programs = $this->input->post("programs");
-        $userid=$this->session->userdata('userid');
         //var_dump($programs);
         $length = 11;
 
@@ -450,16 +449,8 @@ class Development_partners_model extends CI_Model
             'lastupdated' => date("Y-m-d")
         );
 
-        $categoryoptiongroup = array(
-            "name" => $name,
-            "shortname" => substr($shortname, 0, 30),
-            "code" => $code,
-            "userid" => $userid,
-            'lastupdated' => date("Y-m-d"),
-        );
-
         $this->db->where('uid', $agency_uid);
-        if (!$this->db->update("categoryoptiongroup", $categoryoptiongroup)) {
+        if (!$this->db->update("dataelementcategoryoption", $categoryoption)) {
             return "Error Updating Category Option";
         }
 

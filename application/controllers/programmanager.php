@@ -60,7 +60,7 @@ class Programmanager extends CI_Controller
 				$this->load->view('error', $data);
 				die();
 			} else {
-				if ($userrole->attributionroleid!="" ) {
+				if ($userrole->attributionroleid!="") {
 					$roleid=$userrole->attributionroleid;
 				} else {
 					$roleid=$groupname->attributionroleid;

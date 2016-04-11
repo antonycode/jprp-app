@@ -117,7 +117,6 @@
                 <table id="agency_table" class="table table-bordered table-striped">
                     <thead>
                     <tr>
-                        <th>#</th>
                         <th style="width:20%">Mechanism Name</th>
                         <th>Partner Name</th>
                         <th style="width:20%">Datim ID</th>
@@ -129,7 +128,6 @@
                         $i = 1;
                         foreach ($mechanisms as $row) {
                             echo "<tr class='grade_tr' data-id='" . $row->uid . "' data-name='" . $row->name . "'>";
-                            echo "<td>$i</td>";
                             echo "<td>$row->name</td>";
                             echo "<td>$row->shortname</td>";
                             echo "<td>$row->code</td>";

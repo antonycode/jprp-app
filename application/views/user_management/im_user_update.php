@@ -395,7 +395,7 @@
     </script>
     <div class="container">
         <div class="row">
-            <form class="user_form" id="user_details" action="<?php echo base_url('user_manager/im_update'.$userid)?>" method="post">
+            <form class="user_form" id="user_details" action="<?php echo base_url('user_manager/im_update/'.$userid)?>" method="post">
                 <div class="form-group">
                     <label>User Details:</label>
                     <span class="required_notification">* Denotes Required Field</span>
@@ -404,7 +404,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Username:</label>
-                                <input disabled type="text" name="username" id="username"  value="<?php echo $user->fname; ?>"  />
+                                <input disabled type="text" name="username" id="username"  value="<?php echo $user->username; ?>"  />
                             </div>
 
                             <div class="form-group">

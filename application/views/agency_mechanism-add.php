@@ -502,11 +502,11 @@
                     success: function (data, textStatus, jQxhr) {
                         if(data=="True"){
                             $('#code_hint').html("<i class='fa fa-times-circle-o'></i>Code Exists");
-                            $("#agency_code")[0].setCustomValidity('Code Exists');
+                            $("#mechanism_code")[0].setCustomValidity('Code Exists');
                         }
                         else{
                             $('#code_hint').html("<i class='fa fa-check-circle-o'></i>Okay");
-                            $("#agency_code")[0].setCustomValidity('');
+                            $("#mechanism_code")[0].setCustomValidity('');
                         }
                     },
                     error: function (jqXhr, textStatus, errorThrown) {

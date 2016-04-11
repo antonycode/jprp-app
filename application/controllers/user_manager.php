@@ -11,7 +11,8 @@ class User_manager extends CI_Controller {
 		$this->load->model('moh_model');  	
 		$this->load->model('mechanisms_model'); 
 		$this->load->model('usermanagement_model');	
-		$this->load->model('user_model'); 
+		$this->load->model('user_model');
+		$this->load->model('ipsl_model'); 
 	}
 	public function index(){
         if($this->session->userdata('marker')!=1){
@@ -69,13 +70,13 @@ class User_manager extends CI_Controller {
 					if ($level==4) {
 						$data['page']="user_management/im_user_create";
 						$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
-						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+						$data['jprp_roles']=$this->usermanagement_model->get_org_jprp_roles();
 						$data['usercreatefunction']="org_im_user_create";
 						$data['associate']=FALSE;
 					} else{
 						$data['page']="user_management/donoragency_user_create";
 						$data['organization']=$this->usermanagement_model->get_donoragency_groups();
-						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+						$data['jprp_roles']=$this->usermanagement_model->get_org_jprp_roles();
 						$data['usercreatefunction']="org_donoragency_user_create";
 						$data['associate']=FALSE;
 					} 
@@ -95,6 +96,7 @@ class User_manager extends CI_Controller {
             redirect($this->index());
         }else{
         	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
+        		//$this->ipsl_model->ipsl_user_links();
         		$message=$this->usermanagement_model->org_new_im_user();
         		$this->user_list($message);
 			}else{
@@ -109,6 +111,7 @@ class User_manager extends CI_Controller {
             redirect($this->index());
         }else{
         	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))) {
+        		//$this->ipsl_model->ipsl_user_links();
         		$message=$this->usermanagement_model->org_new_donoragancy_user();
     			$this->user_list($message);
 			}else{
@@ -177,6 +180,7 @@ class User_manager extends CI_Controller {
             redirect($this->index());
         }else{
         	if ($this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+        		//$this->ipsl_model->ipsl_user_links();
         		$message=$this->usermanagement_model->global_new_im_user();
     			$this->user_list($message); 						
 			}else{
@@ -303,24 +307,27 @@ class User_manager extends CI_Controller {
 					if ($level=="") {
 						$data['message']="User Has Not Been Allocated A User Group";
 		                $this->load->view('error',$data);						
-					} elseif ($level==4) {
-						$data['page']="user_management/im_user_update";
-						$data['user']=$this->usermanagement_model->get_user_info($userid);
-						$data['userid']=$userid;
-						$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
-						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
-						$data['associate']=FALSE;
 					} else{
-						$data['page']="user_management/donoragency_user_update";
-						$data['user']=$this->usermanagement_model->get_user_info($userid);
-						$data['userid']=$userid;
-						$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
-						$data['associate']=FALSE;
-					} 
-					$data['error_message']=str_replace("%20", " ", "");
-	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
-                 	$data['agencyname']=$this->session->userdata('groupname');						
-					$this->load->view('template',$data);     
+						if ($level==4) {
+							$data['page']="user_management/im_user_update";
+							$data['user']=$this->usermanagement_model->get_user_info($userid);
+							$data['userid']=$userid;
+							$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
+							$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+							$data['associate']=FALSE;
+						} else{
+							$data['page']="user_management/donoragency_user_update";
+							$data['user']=$this->usermanagement_model->get_user_info($userid);
+							$data['userid']=$userid;
+							$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+							$data['associate']=FALSE;
+						} 
+						$data['error_message']=str_replace("%20", " ", "");
+		            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
+	                 	$data['agencyname']=$this->session->userdata('groupname');						
+						$this->load->view('template',$data);						
+					}
+     
 			}else{
 				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
                 $this->load->view('error',$data);					
@@ -335,7 +342,7 @@ class User_manager extends CI_Controller {
         	//Check If User Has Authority(user_management) To Create Programs
         	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))||$this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
 					//Get User hierarchy Level
-        		$message=$this->usermanagement_model->im_update();
+        		$message=$this->usermanagement_model->im_update($userid);
         		$this->user_list($message);
 			}else{
 				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
@@ -343,6 +350,23 @@ class User_manager extends CI_Controller {
 			}       
         }	
 	}
+	
+	public function agencydonor_update($userid){
+        if($this->session->userdata('marker')!=1){
+            redirect($this->index());
+        }else{
+        	//Check If User Has Authority(user_management) To Create Programs
+        	if ($this->user_model->get_user_role('org_user_management',$this->session->userdata('userroleid'))||$this->user_model->get_user_role('global_user_management',$this->session->userdata('userroleid'))) {
+					//Get User hierarchy Level
+        		$message=$this->usermanagement_model->agencydonor_update($userid);
+        		$this->user_list($message);
+			}else{
+				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";
+                $this->load->view('error',$data);					
+			}       
+        }	
+	}		
+	
 
 	public function userrole_list($message=null){
 		if($this->session->userdata('marker')!=1){
@@ -466,6 +490,7 @@ class User_manager extends CI_Controller {
 				$this->load->view('error',$data);
 			}
 		}
-	}
-		
+	}	
+	
+	
 }

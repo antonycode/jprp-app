@@ -215,7 +215,7 @@
                 <table id="dp-table" class="table table-bordered table-striped">
                     <thead>
                     <tr>
-                        <th style="width:5%">#</th>
+                        <th style="width:5%">ID</th>
                         <!-- <th style="width:10%">Program UID</th> -->
                         <th style="width:25%">Name</th>
                         <th style="width:20%">Shortname</th>
@@ -226,16 +226,14 @@
                     <tbody>
                     <?php
                     if ($dplist != '') {
-                        $i=1;
                         foreach ($dplist as $row) {
                             echo "<tr class='grade_tr' data-id='" . $row->id . "' data-name='" . $row->name . "'
                                                     data-shortname='" . $row->shortname . "' data-desc='" . $row->parentid . "' data-uid='" . $row->uid . "'>";
-                            echo "<td>$i</td>";
+                            echo "<td>$row->id</td>";
                             echo "<td>$row->name</td>";
 							echo "<td>$row->shortname</td>";
 							echo "<td>$row->uid</td>";
                             echo "</tr>";
-                            $i=$i+1;
                         }
                     }
 

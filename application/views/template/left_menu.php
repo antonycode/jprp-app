@@ -21,7 +21,7 @@
                     <ul class="sidebar-menu">
                         <li class="active">
                             <a href="<?php echo base_url(); ?>sections/k2d">
-                                <i class="fa fa-dashboard"></i>
+                                <i class="fa fa-home"></i>
                                 <span>JPRP Home</span>
                             </a>
                         </li>                          
@@ -34,7 +34,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."programmanager'>
-		                                <i class='fa fa-tasks'></i>
+		                                <i class='fa fa-bars'></i>
 		                                <span>Programs</span>
 		                            </a>
 		                        </li>                                   
@@ -81,7 +81,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."dataimport'>
-		                                <i class='fa fa-dashboard'></i>
+		                                <i class='fa fa-cloud-download'></i>
 		                                <span>Data Import</span>
 		                            </a>
 		                        </li>                                   
@@ -106,7 +106,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."moh_manager'>
-		                                <i class='fa fa-dashboard'></i>
+		                                <i class='fa fa-tasks'></i>
 		                                <span>Donor Manager</span>
 		                            </a>
 		                        </li>                                   
@@ -131,7 +131,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."development_partners'>
-		                                <i class='fa fa-dashboard'></i>
+		                                <i class='fa fa-tasks'></i>
 		                                <span>Agency Manager</span>
 		                            </a>
 		                        </li>                                   
@@ -156,7 +156,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."agency_mechanism'>
-		                                <i class='fa fa-dashboard'></i>
+		                                <i class='fa fa-tasks'></i>
 		                                <span>Mechanisms Manager</span>
 		                            </a>
 		                        </li>                                   
@@ -181,7 +181,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."implementing_mechanism'>
-		                                <i class='fa fa-dashboard'></i>
+		                                <i class='fa fa-tasks'></i>
 		                                <span>Implementing Mechanism</span>
 		                            </a>
 		                        </li>                                   
@@ -206,7 +206,7 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."supportimport'>
-		                                <i class='fa fa-dashboard'></i>
+		                                <i class='fa fa-upload'></i>
 		                                <span>IPSL Import</span>
 		                            </a>
 		                        </li>                                   
@@ -215,6 +215,25 @@
                              }
                          }
                          ?>  
+                        <?php
+                         if ($menu!="") {
+                         	$temp = json_decode(json_encode($menu),true);
+                             if (array_search('ipsl_import', array_column($temp , 'attributionauthoritiesname'))===FALSE) {
+
+                             }else{
+                                 echo "
+		                        <li class='active'>
+		                            <a href=' ".base_url()."ipsl'>
+		                                <i class='fa fa-tasks'></i>
+		                                <span>IPSL Manager</span>
+		                            </a>
+		                        </li>                                   
+                                 
+                                 ";                             	
+                             }
+                         }
+                         ?>                          
+                         
                         <!--                       
                         <li class="treeview">
                             <a href="#">
@@ -274,12 +293,12 @@
                             </a>
                         </li>       -->  
 
-                        <li class="active">
+                       <!--  <li class="active">
                             <a href="<?php echo base_url(); ?>message">
                                 <i class="fa fa-envelope-o"></i>
                                 <span>mailbox</span>
                             </a>
-                        </li>                                                                                                                                                                  
+                        </li>  -->                                                                                                                                                                 
                     </ul>
                 </section>
                 <!-- /.sidebar -->

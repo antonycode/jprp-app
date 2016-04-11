@@ -425,10 +425,7 @@
                                 <input type="email" name="email" id="email"  placeholder="Email" required/>
                                 <span class="form_hint">Provide a valid Email Address</span>
                             </div>
-                          
-                        </div>
 
-                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Phone Number:</label>
                                 <input type="phonenumber" name="phonenumber" id="phonenumber"  placeholder="Phone Number"
@@ -463,56 +460,13 @@
                                 </select>
                                 <span class="form_hint">Select A Valid JPHES User Role</span>
                             </div> 
-                        </div>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <div class="col-md-12">
-                        <div>
-                            <label for="User Roles" style="font-size: 16px; width: 200px"> Organization Units</label>
-                        </div>
-
-                        <section class="container">
-
-                            <div>
-                                <div>
-                                    <label for="name" style="font-size: 16px; width: 250px">Organization Units Available </label>
-                                </div>
-                                <div>
-                                    <select id="leftValues" size="10" multiple style="width:370px; height:250px;">
-                                        <?php
-                                        if ($dhis2_roles!='') {
-                                            foreach ($dhis2_roles as $row) {
-                                                echo "<option value='$row->userroleid'>$row->name</option>";
-                                            }
-                                        }
-                                        ?>
-                                    </select>
-                                </div>
-                            </div>
-                            <div style="margin-top: 10%;">
-                                <input type="button" class="btn btn-md" id="btnRight" value="&gt;&gt;"/>
-                                <input type="button" class="btn btn-md" id="btnLeft" value="&lt;&lt;" style="margin-top: 30px"/>
-                            </div>
-                            <div>
-                                <div>
-                                    <div>
-                                        <label for="name" style="font-size: 16px; margin-left:0px; width: 250px">Selected Organization Units</label>
-                                    </div>
-                                    <div>
-                                        <select id="rightValues" size="10" name='orgunits[]'multiple="multiple" style="width:370px; height:250px;" required >
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-
-                        </section>
                         <div class="col-md-offset-3">
                             <button class="submit">Submit</button>
+                        </div>                            
                         </div>
                     </div>
                 </div>
+
             </form>
         </div>
     </div>

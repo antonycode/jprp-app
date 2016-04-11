@@ -78,16 +78,7 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
 		} else {
 			return "";
 		}        
-    }
-
-    public function get_all_authorities(){
-        $authorities = $this->db->get('attributionauthorities');
-        if (sizeof($authorities->result())>0) {
-            return $authorities->result();
-        } else {
-            return "";
-        }
-    }
+    }	
     public function get_dhisroles($level){
         $roles = $this->db->get_where('userrole',array('hierarchy_level_id'=>$level));
 		if (sizeof($roles->result())>0) {
@@ -124,7 +115,14 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
 			return "";
 		}  		
 	}
-	
+	public function get_org_jprp_roles(){
+		$roles=$this->db->get_where('attribution_roles',array("usergroupid"=>$this->session->userdata('groupid')));
+		if (sizeof($roles->result())>0) {
+			return $roles->result();
+		} else {
+			return "";
+		}  		
+	}	
 	public function org_new_im_user(){
 		$username=$this->input->post('username');
 		$firstname=$this->input->post('username');
@@ -219,11 +217,133 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
                 $this->db->insert('userdatavieworgunits', $userdatavieworgunits);
                 $this->db->insert('userrolemembers', $userrolemembers);
                 $this->db->insert('users_catdimensionconstraints', $users_catdimensionconstraints);
+				$this->useripsl();
             }
 
         }
+		
 		return "User Has Been Successfully Created";
 	}
+	
+	
+	public function useripsl(){
+		//echo "okboss";
+		$deletequery="
+DELETE FROM usermembership 
+WHERE userinfoid in
+(select groupmem.userid from usergroupmembers as groupmem,attribution_hierarchy as ath 
+where groupmem.usergroupid=ath.usergroup_id and ath.level=4);		
+		";
+		$this->db->query($deletequery);
+		$updatequery="INSERT INTO usermembership (organisationunitid,userinfoid)
+select orgs.organisationunitid, groupmem.userid from usergroupmembers as groupmem, organisationunit as orgs,attribution_hierarchy as ath, ipsl as ipsl, userinfo as users
+WHERE ath.code=ipsl.datimid  and orgs.code=ipsl.mflcode and groupmem.usergroupid=ath.usergroup_id and users.userinfoid=groupmem.userid";
+	$this->db->query($updatequery);		
+	$query="
+SELECT umem.userinfoid as userinfoid ,umem.organisationunitid as organisationunitid
+  FROM attribution_hierarchy as ath, usergroupmembers as gmem, usermembership as umem 
+  where gmem.usergroupid=ath.usergroup_id and 
+umem.userinfoid=gmem.userid and ath.level=4	
+	";
+	
+	$umem=$this->db->query($query);
+	foreach ($umem->result() as $row) {
+		$parentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$row->organisationunitid));
+		if ($parentid->row()->parentid!='') {
+			if (sizeof($this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$parentid->row()->parentid)))<1) {
+				$data=array(
+					"userinfoid"=>$row->userinfoid,
+					"organisationunitid"=>$parentid->row()->parentid
+				);
+				$this->db->insert("usermembership", $data); 
+				echo "damm";
+				//Grandparent
+				$grandparentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$parentid->row()->parentid));
+				if ($grandparentid->row()->parentid!='') {
+					echo "shiet </br>";
+					if (sizeof($this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$grandparentid->row()->parentid)))<1) {
+						$data=array(
+							"userinfoid"=>$row->userinfoid,
+							"organisationunitid"=>$grandparentid->row()->parentid
+						);
+						//$this->db->insert("usermembership", $data); 						
+					}
+				}
+			}						
+		}
+
+	}
+
+	
+	
+	
+	/*
+	while ($i <= 3) {
+		echo "cllla";
+		$heirachyquery="
+select mem.*,org.name, org.parentid from 
+usermembership as mem, organisationunit as org
+where org.organisationunitid=mem.organisationunitid and org.parentid not in (select mems.organisationunitid from usermembership as mems where mems.userinfoid=mem.userinfoid)				
+		";
+		$this->db->query($heirachyquery);
+		$i=$i+1;
+	}*/
+	
+	$querys="
+SELECT umem.userinfoid as userinfoid ,umem.organisationunitid as organisationunitid
+  FROM attribution_hierarchy as ath, usergroupmembers as gmem, usermembership as umem 
+  where gmem.usergroupid=ath.usergroup_id and 
+umem.userinfoid=gmem.userid and ath.level=4	
+	";		
+		$umem=$this->db->query($querys);
+		foreach ($umem->result() as $row) {
+			$parentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$row->organisationunitid));
+			//echo "wat".$parentid->row()->parentid;
+			if (is_numeric ($parentid->row()->parentid)) {
+				$dbq=$this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$parentid->row()->parentid));
+				if ($dbq->num_rows() == 0) {
+					//echo "my nigga";		
+					$data=array(
+						"userinfoid"=>$row->userinfoid,
+						"organisationunitid"=>$parentid->row()->parentid
+					);
+					$this->db->insert("usermembership", $data); 
+					//Grandparent
+					$grandparentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$parentid->row()->parentid));
+					if (is_numeric ($grandparentid->row()->parentid)) {
+						//echo "shiet </br>";
+						$grand=$this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$grandparentid->row()->parentid));
+						if ($grand->num_rows() == 0) {
+							//echo "yes </br>";
+							$data=array(
+								"userinfoid"=>$row->userinfoid,
+								"organisationunitid"=>$grandparentid->row()->parentid
+							);
+							$this->db->insert("usermembership", $data); 	
+							
+							//Grandparent
+							$greatparentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$grandparentid->row()->parentid));
+							if (is_numeric ($greatparentid->row()->parentid)) {
+								//echo "shiet </br>";
+								$great=$this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$greatparentid->row()->parentid));
+								if ($great->num_rows() == 0) {
+									//echo "iko boss </br>";
+									$data=array(
+										"userinfoid"=>$row->userinfoid,
+										"organisationunitid"=>$greatparentid->row()->parentid
+									);
+									$this->db->insert("usermembership", $data); 							
+								}
+							}								
+													
+						}
+					}					
+				}					
+			}
+	
+		}		
+	}	
+	
 	
 	public function org_new_donoragancy_user(){
 		$username=$this->input->post('username');
@@ -532,6 +652,7 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
             }
 
         }
+		$this->useripsl();
 		return "User Has Been Successfully Created";
 	}
 	
@@ -553,7 +674,48 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
 		}
 		return "";	
 	}
-
+	
+	public function im_update($userid){
+		$userinfo=array(
+			"firstname"=>$this->input->post('firstname'),
+			"surname"=>$this->input->post('firstname'),
+			"email"=>$this->input->post('email'),
+			"phonenumber"=>$this->input->post('phonenumber'),
+			"attributionroleid"=>$this->input->post('jphesrole')
+		);
+		$this->db->where('userinfoid', $userid);
+		
+		if ($this->db->update('userinfo', $userinfo)) {
+			$dhis=array(
+				"userroleid"=>$this->input->post('dhisrole')
+			);
+			$this->db->where('userid', $userid);
+			if ($this->db->update('userrolemembers', $dhis)) {
+				return "User Has Successfully Been Updated";
+			} else {
+				return " Error Occurred During Userrole Update";
+			}
+						
+		}
+		return " Error Occurred During Userinfo Update";		
+	}
+	
+	public function agencydonor_update($userid){
+		$userinfo=array(
+			"firstname"=>$this->input->post('firstname'),
+			"surname"=>$this->input->post('firstname'),
+			"email"=>$this->input->post('email'),
+			"phonenumber"=>$this->input->post('phonenumber'),
+			"attributionroleid"=>$this->input->post('jphesrole')
+		);
+		$this->db->where('userinfoid', $userid);
+		if ($this->db->update('userinfo', $userinfo)) {
+			return "User Has Successfully Been Updated";	
+		}else{
+			return " Error Occurred During Userinfo Update";
+		}
+				
+	}
 
 
 //Attribution Role -Fetch Authorities
@@ -778,5 +940,70 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
     }
 
 
+
+		public function ipsl_user_links($userinfoid, $usergroup){
+				$updateorgs="INSERT INTO usermembership (organisationunitid,userinfoid)
+				select orgs.organisationunitid, users.userinfoid from usergroupmembers as groupmem, organisationunit as orgs,attribution_hierarchy as ath, ipsl as ipsl, userinfo as users
+				WHERE ath.code=ipsl.datimid  and orgs.code=ipsl.mflcode and ath.usergroup_id=$usergroup and users.userinfoid=$userinfoid ";
+					$this->db->query($updateorgs);
+			
+			$querys="
+			SELECT umem.userinfoid as userinfoid ,umem.organisationunitid as organisationunitid
+			  FROM attribution_hierarchy as ath, usergroupmembers as gmem, usermembership as umem 
+			  where gmem.usergroupid=ath.usergroup_id and 
+			umem.userinfoid=$userinfoid and ath.level=4	
+				";		
+		$umem=$this->db->query($querys);
+		foreach ($umem->result() as $row) {
+			$parentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$row->organisationunitid));
+			//echo "wat".$parentid->row()->parentid;
+			if (is_numeric ($parentid->row()->parentid)) {
+				$dbq=$this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$parentid->row()->parentid));
+				if ($dbq->num_rows() == 0) {
+					//echo "my nigga";		
+					$data=array(
+						"userinfoid"=>$row->userinfoid,
+						"organisationunitid"=>$parentid->row()->parentid
+					);
+					$this->db->insert("usermembership", $data); 
+					//Grandparent
+					$grandparentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$parentid->row()->parentid));
+					if (is_numeric ($grandparentid->row()->parentid)) {
+						//echo "shiet </br>";
+						$grand=$this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$grandparentid->row()->parentid));
+						if ($grand->num_rows() == 0) {
+							//echo "yes </br>";
+							$data=array(
+								"userinfoid"=>$row->userinfoid,
+								"organisationunitid"=>$grandparentid->row()->parentid
+							);
+							$this->db->insert("usermembership", $data); 	
+							
+							//Grandparent
+							$greatparentid=$this->db->get_where("organisationunit",array("organisationunitid"=>$grandparentid->row()->parentid));
+							if (is_numeric ($greatparentid->row()->parentid)) {
+								//echo "shiet </br>";
+								$great=$this->db->get_where("usermembership",array("userinfoid"=>$row->userinfoid,"organisationunitid"=>$greatparentid->row()->parentid));
+								if ($great->num_rows() == 0) {
+									echo "iko boss </br>";
+									$data=array(
+										"userinfoid"=>$row->userinfoid,
+										"organisationunitid"=>$greatparentid->row()->parentid
+									);
+									$this->db->insert("usermembership", $data); 							
+								}
+							}								
+													
+						}
+					}					
+				}					
+			}
+	
+		}		
+	}
+	
+
+
+	
 }
 

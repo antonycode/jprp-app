@@ -11,7 +11,7 @@
      public function mechanism_support_list(){
          $hierarchy_uid=$this->session->userdata('group_uid');
 		 $datimid=$this->db->get_where("attribution_keys",array("mechanism_uid"=>$this->session->userdata('group_uid')))->row()->datim_id;
-         $support=$this->db->get_where("attribution_mechanisms_programs",array("status"=>'active',"datim_id"=>$datimid))->result();
+         $support=$this->db->get_where("ipsl",array("datimid"=>$datimid))->result();
          if (sizeof($support)>=1) {
              return $support;
          }

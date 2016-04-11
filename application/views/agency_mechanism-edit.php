@@ -251,7 +251,7 @@
             </li>
             <li>
                 <label for="name">Code:</label>
-                <input id="mechanism_code" type="text" name="code" readonly  placeholder="e.g Datim ID" value="<?php if(isset($mechanism->datim_id)) echo $mechanism->datim_id; ?>"  required pattern="[1-9][0-9]{4,}"  />
+                <input id="mechanism_code" type="text" name="code"  placeholder="e.g Datim ID" value="<?php if(isset($mechanism->datim_id)) echo $mechanism->datim_id; ?>"  required pattern="[1-9][0-9]{4,}"  />
                 <span id="code_hint" class="form_hint">Code Must Be Of Atleast 4 Integer Character Long</span>
             </li>
             <li>
