@@ -206,8 +206,8 @@
                                  echo "
 		                        <li class='active'>
 		                            <a href=' ".base_url()."supportimport'>
-		                                <i class='fa fa-upload'></i>
-		                                <span>IPSL Import</span>
+		                                <i class='fa fa-wrench'></i>
+		                                <span>MOH Data Attribution</span>
 		                            </a>
 		                        </li>                                   
                                  
