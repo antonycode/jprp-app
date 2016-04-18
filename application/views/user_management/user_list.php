@@ -171,21 +171,25 @@
                         <div class="modal-body">
                             <form action="<?php echo base_url('usermanagement/update_user'); ?>" method="post">
                                 <div class="form-group">
-                                    <label for="recipient-name" class="control-label">User Name:</label>
-                                    <input type="text" class="form-control" id="username" name="username"
+                                    <label for="recipient-name" class="control-label">UserName:</label>
+                                    <input type="text" disabled="true" class="form-control" id="username" name="username"
                                            value="">
                                     <input type="hidden" id="userid" name="userid" value="">
                                 </div>
                                 <div>
-                                    <select id="basic" name="role">
-                                        <?php
-                                        if ($roles != '') {
-                                            foreach ($roles as $row) {
-                                                echo "<option value='" . $row->attributionroleid . "' >".$row->rolename."</option>";
-                                            }
+                                <div class="form-group">
+                                <label for="name">JPHES User Role:</label><br/>
+                                <select id="jphesrole" name="jphesrole" style="min-width: 200px; min-height: 22px" required placeholder="Choose here" >
+                                    <option value="" selected disabled>Choose here</option>
+                                    <?php
+                                    if ($jprp_roles!='') {
+                                        foreach ($jprp_roles as $row) {
+                                            echo "<option value='$row->attributionroleid'>$row->rolename</option>";
                                         }
-                                        ?>
-                                    </select>
+                                    }
+                                    ?>                                  
+                                </select>
+                            </div> 
                                 </div>
                                 <button type="submit" class="btn btn-primary">Update User</button>
                             </form>
@@ -290,7 +294,7 @@
     <ul class="" style="list-style-type:none">
         <?php
         echo '<li class=""><a href="#" id="viewuser"><i class="fa fa-plus"></i> View</a></li> <br>';
-        echo '<li class=""><a href="#updateuserModal" id="updateuser"><i class="fa fa-edit"></i>Role Update</a></li> <br>';
+        // echo '<li class=""><a href="#updateuserModal" id="updateuser"><i class="fa fa-edit"></i>Role Update</a></li> <br>';
         echo '<li class=""><a href="#" id="deleteuser" onclick=""><i class="fa fa-trash-o"></i> Delete</a></li> <br>';
         ?>
     </ul>

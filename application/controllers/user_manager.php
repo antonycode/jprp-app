@@ -51,7 +51,9 @@ class User_manager extends CI_Controller {
 					$data['error_message']=str_replace("%20", " ", $errors);
 					$data['right']=FALSE;
 	            	$data['menu'] = $this->user_model->menu_items($this->session->userdata('userroleid'));
-                 	$data['agencyname']=$this->session->userdata('groupname');						
+                 	$data['agencyname']=$this->session->userdata('groupname');	
+                    //jphesroles
+                    //$data['jprp_roles']=$this->usermanagement_model->get_org_jprp_roles();					
 					$this->load->view('template',$data);
 			}else{
 				$data['message']="Kindly Contact The Administrator You Have No Access Rights To This Module";

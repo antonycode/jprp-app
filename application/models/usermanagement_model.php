@@ -125,7 +125,7 @@ where groups.usergroupid=$group_id and groups.usergroupid=members.usergroupid an
 	}	
 	public function org_new_im_user(){
 		$username=$this->input->post('username');
-		$firstname=$this->input->post('username');
+		$firstname=$this->input->post('firstname');
 		$surname=$this->input->post('surname');
 		$email=$this->input->post('email');
 		$phone=$this->input->post('phonenumber');
@@ -347,7 +347,7 @@ umem.userinfoid=gmem.userid and ath.level=4
 	
 	public function org_new_donoragancy_user(){
 		$username=$this->input->post('username');
-		$firstname=$this->input->post('username');
+		$firstname=$this->input->post('firstname');
 		$surname=$this->input->post('surname');
 		$email=$this->input->post('email');
 		$phone=$this->input->post('phonenumber');
@@ -451,7 +451,7 @@ umem.userinfoid=gmem.userid and ath.level=4
 
 	public function global_new_donoragancy_user(){
 		$username=$this->input->post('username');
-		$firstname=$this->input->post('username');
+		$firstname=$this->input->post('firstname');
 		$surname=$this->input->post('surname');
 		$email=$this->input->post('email');
 		$phone=$this->input->post('phonenumber');
