@@ -313,7 +313,7 @@ class User_manager extends CI_Controller {
 							$data['user']=$this->usermanagement_model->get_user_info($userid);
 							$data['userid']=$userid;
 							$data['dhis2_roles']=$this->usermanagement_model->get_dhisroles($level);
-							$data['jprp_roles']=$this->usermanagement_model->get_jprp_roles();
+							$data['jprp_roles']=$this->usermanagement_model->get_org_jprp_roles();
 							$data['associate']=FALSE;
 						} else{
 							$data['page']="user_management/donoragency_user_update";

@@ -431,7 +431,7 @@
                             <div class="form-group">
                                 <label for="name">JPHES User Role:</label>
                                 <select id="jphesrole" name="jphesrole" style="min-width: 200px; min-height: 22px" required>
-                                	<option selected disabled>Choose here</option>
+                                	<option value="" selected disabled>Choose here</option>
                                     <?php
                                     if ($jprp_roles!='') {
                                         foreach ($jprp_roles as $row) {
@@ -448,7 +448,7 @@
 		                            <div class="form-group">
 		                                <label for="name">Associate Organization:</label>
 		                                <select id="associate" name="associate" style="min-width: 200px; min-height: 22px" required>
-		                                	<option selected disabled>Choose here</option>									
+		                                	<option value="" selected disabled>Choose here</option>									
 									';  
                                         foreach ($associate as $row) {
                                             echo "<option value='$row->gid'>$row->gname</option>";

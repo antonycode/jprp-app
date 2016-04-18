@@ -432,8 +432,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">Dhis User Role:</label>
-                                <select id="dhisrole" name="dhisrole" style="min-width: 200px; min-height: 22px" required>
-                                	<option selected disabled>Choose here</option>
+                                <select id="dhisrole" name="dhisrole" style="min-width: 200px; min-height: 22px" required placeholder="Choose here" >
+                                	<option value="" selected disabled>Choose here</option>
                                     <?php
                                     if ($dhis2_roles!='') {
                                         foreach ($dhis2_roles as $row) {
@@ -446,8 +446,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="name">JPHES User Role:</label>
-                                <select id="jphesrole" name="jphesrole" style="min-width: 200px; min-height: 22px" required>
-                                	<option selected disabled>Choose here</option>
+                                <select id="jphesrole" name="jphesrole" style="min-width: 200px; min-height: 22px" required placeholder="Choose here" >
+                                	<option value="" selected disabled>Choose here</option>
                                     <?php
                                     if ($jprp_roles!='') {
                                         foreach ($jprp_roles as $row) {

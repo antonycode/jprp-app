@@ -556,7 +556,7 @@ umem.userinfoid=gmem.userid and ath.level=4
 
 	public function global_new_im_user(){
 		$username=$this->input->post('username');
-		$firstname=$this->input->post('username');
+		$firstname=$this->input->post('firstname');
 		$surname=$this->input->post('surname');
 		$email=$this->input->post('email');
 		$phone=$this->input->post('phonenumber');
@@ -678,7 +678,7 @@ umem.userinfoid=gmem.userid and ath.level=4
 	public function im_update($userid){
 		$userinfo=array(
 			"firstname"=>$this->input->post('firstname'),
-			"surname"=>$this->input->post('firstname'),
+			"surname"=>$this->input->post('surname'),
 			"email"=>$this->input->post('email'),
 			"phonenumber"=>$this->input->post('phonenumber'),
 			"attributionroleid"=>$this->input->post('jphesrole')
@@ -703,7 +703,7 @@ umem.userinfoid=gmem.userid and ath.level=4
 	public function agencydonor_update($userid){
 		$userinfo=array(
 			"firstname"=>$this->input->post('firstname'),
-			"surname"=>$this->input->post('firstname'),
+			"surname"=>$this->input->post('surname'),
 			"email"=>$this->input->post('email'),
 			"phonenumber"=>$this->input->post('phonenumber'),
 			"attributionroleid"=>$this->input->post('jphesrole')
