@@ -349,12 +349,12 @@
 <!-- Content Header (Page header) -->
 <section class="content-header">
     <h1>
-        Create User
+        Update User
     </h1>
     <ol class="breadcrumb">
         <li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
         <li><a href="#">User Management</a></li>
-        <li class="active">Create User</li>
+        <li class="active">Update User</li>
     </ol>
 </section>
 
@@ -404,7 +404,7 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="name">Username:</label>
-                                <input disabled type="text" name="username" id="username"  value="<?php echo $user->username; ?>"  />
+                                <input disabled type="text" name="username" disabled="true" id="username"  value="<?php echo $user->username; ?>"  />
                             </div>
 
                             <div class="form-group">
