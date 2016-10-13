@@ -1,1 +1,1 @@
-# jprp app
+# JPRP Concept
